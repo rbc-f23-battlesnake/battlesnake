@@ -1,0 +1,41 @@
+name: Deploy branch to Railway
+
+on: 
+  push:
+    branches:
+      - 'main'
+      - 'nic'
+      - 'roxie'
+      - 'jerome'
+      - 'uma'
+      - 'timothy'
+
+permissions:
+  contents: read
+
+env:
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+jobs:
+  deploy:
+    name: Set up new Railway service for branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      - name: Deploy to existing service that is your name
+        run: | 
+          railway up -ds ${{ github.head_ref || github.ref_name }} 
+
+      - name: Echo link to branch deployment
+        run: |
+          echo 'Finished deploying to https://${{ github.head_ref || github.ref_name }}-battlesnake.up.railway.app/'
