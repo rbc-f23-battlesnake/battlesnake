@@ -36,6 +36,12 @@ jobs:
         run: | 
           railway up -ds ${{ github.head_ref || github.ref_name }} 
 
+      # Wait for pod to spin up
+      - name: Sleep for 30s
+        uses: juliangruber/sleep-action@v2.0.0
+        with:
+          time: 30s
+
       - name: Echo link to branch deployment
         run: |
           echo 'Finished deploying to https://${{ github.head_ref || github.ref_name }}-battlesnake.up.railway.app/'
