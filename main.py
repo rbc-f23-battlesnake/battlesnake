@@ -49,6 +49,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     best_move = battle_snake.get_best_move()
     print(f"MOVE {game_state['turn']}: " + best_move)
     return {"move": best_move}
+    
 
 # Start server when `python main.py` is run
 if __name__ == "__main__":
