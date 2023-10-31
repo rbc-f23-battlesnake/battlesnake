@@ -14,7 +14,7 @@ class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
         self.board = Board(game_data)
         self.our_snake = self.board.get_our_snake()
-        self.branch_count = 0
+        self.seen = set()
         self.shortest_path = []
 
 
@@ -23,36 +23,36 @@ class Battlesnake:
     ##############################
     def get_best_move(self) -> str:
         
-        if len(self.board.snakes) > 3:
-            depth = 1
-        elif len(self.board.snakes) > 2:
-            depth = 2
-        else:
-            depth = 2
-        
+        # Find safe moves
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
-
-        self.branch_count = 0
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 17, m)]
-
-        preferred_moves = safest_moves if safest_moves else safe_moves
         
-        if (len(preferred_moves) == 0):
+        if (len(safe_moves) == 0):
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
+        
+        ##############################################################################################
+        self.branch_count = 0
+        # I don't think we need is_stuck_in_dead_end
+        safest_moves = [] # [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, turns=12, move=m)]
+        preferred_moves = safest_moves if safest_moves else safe_moves
+        ##############################################################################################
         
         # Grow if we are small or have low health
         if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
             print("Growing!")
-            return self.best_direction_to_food(self.board, preferred_moves)
+            return self.best_direction_to_food(preferred_moves)
         
         # If we aren't the largest snake by at least 2 points, we need to be
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("Growing!")
-            return self.best_direction_to_food(self.board, preferred_moves)
+            return self.best_direction_to_food(preferred_moves)
 
-        # Otherwise do random move
-        return random.choice(preferred_moves)
+
+        # If we can possibly kill a snake, do it
+        # TODO
+        
+        # Otherwise pick move that gives the most space
+        return self.most_squares_move(moveChoices=preferred_moves)
         
         
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
@@ -60,9 +60,88 @@ class Battlesnake:
         return safe_moves
     
     
+    # Find move that gives most number of controlled squares
+    def most_squares_move(self, moveChoices):
+        bestMove = moveChoices[0]
+        bestSquares = 0
+        for move in moveChoices[1:]:
+            board_copy = self.board.copy()
+            board_copy.move_snake(self.our_snake.id, move)
+            our_snake_copy = board_copy.get_our_snake()
+            
+            # If this move results in instant death, don't do it
+            # TODO we can probably simulate making all other snakes pick a move that gives them food if they have one
+            if not self.__get_safe_moves(board_copy.get_our_snake(), board_copy, checkHeadOnHead=False):
+                continue
+            
+            # Determine number of tiles our snake can access
+            
+            # Create a board for flood fill algorithm
+            snake_board = [[False for _ in range(board_copy.width)] for _ in range(board_copy.height)]
+            
+            # Populate        
+            for snake in board_copy.snakes:
+                for x, y in snake.tiles:
+                    snake_board[y][x] = True
+
+            
+            self.seen = set()
+            self.floodfill(our_snake_copy.tiles[0][0], our_snake_copy.tiles[0][1], snake_board)
+            
+            if len(self.seen) > bestSquares:
+                bestMove = move
+                bestSquares = len(self.seen)
+            
+            
+            # Too slow :((
+            # # Calculate available tiles with bfs
+            # seen = set()
+            # to_visit = []
+            
+            # for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
+            #     if not ((0 <= x + dx < board_copy.width) and (0 <= y + dy < board_copy.height)):
+            #         continue
+            #     # Can't go on top of existing snake
+            #     elif snake_board[y + dy][x + dx]:
+            #         continue
+            #     to_visit.append([x + dx, y + dy])
+            
+            # # do BFS
+            # while to_visit:
+            #     x, y = to_visit.pop(0)
+            #     seen.add((x, y))
+                
+            #     for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
+            #         if (x + dx, y + dy) in seen:
+            #             continue
+            #         elif not ((0 <= x + dx < board_copy.width) and (0 <= y + dy < board_copy.height)):
+            #             continue
+            #         # Can't go on top of existing snake
+            #         elif snake_board[y + dy][x + dx]:
+            #             continue
+                    
+            #         to_visit.append([x + dx, y + dy])
+            # print(seen)
+        
+        print(f"Best move is: {bestMove} with {bestSquares} of squares")
+        return bestMove
+    
+    def floodfill(self, x, y, snake_board):
+        for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
+            if (x + dx, y + dy) in self.seen:
+                continue
+            elif not ((0 <= x + dx < self.board.width) and (0 <= y + dy < self.board.width)):
+                continue
+            # Can't go on top of existing snake
+            elif snake_board[y + dy][x + dx]:
+                continue
+            
+            self.seen.add((x, y))
+            self.floodfill(x + dx, y + dy, snake_board)
+    
     # Find shortest path to food
-    def best_direction_to_food(self, board: Board, moveChoices):
-        our_snake = board.get_our_snake()
+    def best_direction_to_food(self, moveChoices):
+        our_snake = self.our_snake
         visited = set()
         
         initial_head = tuple(our_snake.tiles[0].tolist())
@@ -88,15 +167,15 @@ class Battlesnake:
             if new_head in visited:
                 continue
             
-            snake_copy.move(path[-1], board.food)
+            snake_copy.move(path[-1], self.board.food)
             
-            for f in board.food:
+            for f in self.board.food:
                 if tuple(f.tolist()) == new_head:
                     return path[0]
             
             visited.add(new_head)
 
-            for m in self.__get_safe_moves(snake_copy, board):
+            for m in self.__get_safe_moves(snake_copy, self.board):
                 to_visit.append((snake_copy.copy(), path.copy() + [m]))
 
         print("Error can't find path to food")
