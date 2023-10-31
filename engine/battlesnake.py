@@ -64,7 +64,7 @@ class Battlesnake:
     def most_squares_move(self, moveChoices):
         bestMove = moveChoices[0]
         bestSquares = 0
-        for move in moveChoices[1:]:
+        for move in moveChoices:
             board_copy = self.board.copy()
             board_copy.move_snake(self.our_snake.id, move)
             our_snake_copy = board_copy.get_our_snake()
