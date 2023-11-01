@@ -22,14 +22,6 @@ class Battlesnake:
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
-        
-        if len(self.board.snakes) > 3:
-            depth = 1
-        elif len(self.board.snakes) > 2:
-            depth = 2
-        else:
-            depth = 2
-        
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
 
         self.branch_count = 0
@@ -50,6 +42,23 @@ class Battlesnake:
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("Growing!")
             return self.best_direction_to_food(self.board, preferred_moves)
+        
+        # # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
+        # elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
+        #     #  Move towards 2nd largest enemy snake head
+        #     largest_enemy = self.board.get_largest_enemy_snake()
+            
+        #     # Get array of enemy snakes possible moves (not wall, not neck)
+        #     possible_enemy_moves = []
+        #     for m in moves:
+        #         l = 0
+        #     # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
+
+
+        #     # What do we need to be careful of when following enemy snake?
+
+        #     return random.choice(preferred_moves)
+
 
         # Otherwise do random move
         return random.choice(preferred_moves)

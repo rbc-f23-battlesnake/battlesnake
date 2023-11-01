@@ -19,6 +19,14 @@ class Snake:
             # The head is always the first index in the body
             self.tiles = np.asarray([np.array([posn['x'], posn['y']]) for posn in args[0]['body']])
 
+    def get_length(self) -> int:
+        return len(self.tiles)
+    
+    def get_head(self) -> typing.tuple(int,int):
+        return self.tiles[0]
+    
+    def get_neck(self) -> typing.tuple(int,int):
+        return self.tiles[1]
 
     def copy(self) -> 'Snake':
         snake = Snake()

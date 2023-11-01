@@ -41,7 +41,16 @@ class Board:
         board.turn = self.turn
         return board
     
-    
+    def get_largest_enemy_snake(self) -> Snake:
+        for snake in self.snakes:
+            enemy = None
+            largest = 0
+            if not snake.is_our_snake and snake.is_alive:
+                if snake.get_length() > largest:
+                    largest = snake.get_length()
+                    enemy = snake
+            return enemy
+
     def get_our_snake(self) -> Snake:
         return [snake for snake in self.snakes if snake.is_our_snake][0]
     
