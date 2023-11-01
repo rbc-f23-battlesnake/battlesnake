@@ -22,10 +22,10 @@ class Snake:
     def get_length(self) -> int:
         return len(self.tiles)
     
-    def get_head(self) -> typing.tuple(int,int):
+    def get_head(self):
         return self.tiles[0]
     
-    def get_neck(self) -> typing.tuple(int,int):
+    def get_neck(self):
         return self.tiles[1]
 
     def copy(self) -> 'Snake':
