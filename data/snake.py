@@ -28,6 +28,7 @@ class Snake:
     def get_neck(self):
         return self.tiles[1]
 
+
     def copy(self) -> 'Snake':
         snake = Snake()
         snake.health = self.health

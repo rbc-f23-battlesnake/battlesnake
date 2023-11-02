@@ -1,6 +1,6 @@
 from data.board import Board
 from data.snake import Snake
-
+import common.moves as common
 import numpy as np
 import random
 import typing
@@ -43,21 +43,23 @@ class Battlesnake:
             print("Growing!")
             return self.best_direction_to_food(self.board, preferred_moves)
         
-        # # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
+        # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
         # elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
         #     #  Move towards 2nd largest enemy snake head
         #     largest_enemy = self.board.get_largest_enemy_snake()
             
         #     # Get array of enemy snakes possible moves (not wall, not neck)
-        #     possible_enemy_moves = []
-        #     for m in moves:
-        #         l = 0
+        #     possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
+        #     possible_enemy_tiles = []
+        #     for m in possible_enemy_moves:
+        #        possible_tile = common.simulate_move(m, largest_enemy.get_head())
+        #        possible_enemy_tiles.append(possible_tile)
         #     # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
 
 
-        #     # What do we need to be careful of when following enemy snake?
+            # What do we need to be careful of when following enemy snake?
 
-        #     return random.choice(preferred_moves)
+            return random.choice(preferred_moves)
 
 
         # Otherwise do random move
