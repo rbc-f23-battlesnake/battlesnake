@@ -4,7 +4,6 @@ import common.moves as common
 import numpy as np
 import random
 import typing
-from scipy import spatial
 
 
 moves = ["up", "left", "right", "down"]
@@ -59,8 +58,10 @@ class Battlesnake:
             target_tile = random.choice(possible_enemy_tiles)
             
             # What do we need to be careful of when following enemy snake?
+            move = self.best_direction_to_target_tile(target_tile, preferred_moves)
 
-            return self.best_direction_to_target_tile(target_tile, preferred_moves)
+            print(f"LETS ATTACK: Move {move} to {target_tile}!")
+            return move
 
 
         # Otherwise do random move
