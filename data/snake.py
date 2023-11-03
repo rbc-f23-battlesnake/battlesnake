@@ -6,6 +6,7 @@ class Snake:
         if (len(args)) == 0:
             self.health = 0
             self.id = ""
+            self.name = ""
             self.is_our_snake = False
             self.is_alive = False
             self.has_killed = False
@@ -13,6 +14,7 @@ class Snake:
         else:
             self.health = args[0]['health']
             self.id = args[0]['id']
+            self.name = args[0]['name']
             self.is_our_snake = False if len(args) == 1 else args[1]
             self.is_alive = True
             self.has_killed = False
@@ -33,6 +35,7 @@ class Snake:
         snake = Snake()
         snake.health = self.health
         snake.id = self.id
+        snake.name = self.name
         snake.is_our_snake = self.is_our_snake
         snake.tiles = self.tiles.copy()
         snake.is_alive = self.is_alive

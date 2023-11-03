@@ -35,19 +35,30 @@ class Battlesnake:
         
         # Grow if we are small or have low health
         if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
-            print("Growing!")
+            print("We hungry/small! Growing!")
+            if len(self.board.food) > 1:
+                print("No food found")
+                return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
         
         # If we aren't the largest snake by at least 2 points, we need to be
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
-            print("Growing!")
+            print("We need to be bigger! Growing!")
+            if len(self.board.food) > 1:
+                print("No food found")
+                return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
         
         # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
         elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
+            print("Attacking!")
             #  Move towards 2nd largest enemy snake head
             largest_enemy = self.board.get_largest_enemy_snake()
+
+            if not largest_enemy:
+                return random.choice(preferred_moves)
             
+            print(f"LETS ATTACK! {largest_enemy.name}")
             # Get array of enemy snakes possible moves (not wall, not neck)
             possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
             possible_enemy_tiles = []
@@ -55,6 +66,7 @@ class Battlesnake:
                possible_tile = common.simulate_move(m, largest_enemy.get_head())
                possible_enemy_tiles.append(possible_tile)
             # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
+            print(f"Their moves are: {possible_enemy_moves}!")
             target_tile = random.choice(possible_enemy_tiles)
             
             # What do we need to be careful of when following enemy snake?
@@ -63,8 +75,8 @@ class Battlesnake:
             print(f"LETS ATTACK: Move {move} to {target_tile}!")
             return move
 
-
         # Otherwise do random move
+        print("Random move!")
         return random.choice(preferred_moves)
         
         

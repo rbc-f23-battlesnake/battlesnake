@@ -45,7 +45,7 @@ class Board:
         for snake in self.snakes:
             enemy = None
             largest = 0
-            if not snake.is_our_snake and snake.is_alive:
+            if snake.is_our_snake == False and snake.is_alive:
                 if snake.get_length() > largest:
                     largest = snake.get_length()
                     enemy = snake
