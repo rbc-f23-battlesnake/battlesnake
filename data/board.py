@@ -40,7 +40,10 @@ class Board:
         board.snakes = self.snakes.copy()
         board.turn = self.turn
         return board
-    
+
+    def get_food_count(self) -> int:
+        return self.food.size
+
     def get_largest_enemy_snake(self) -> Snake:
         for snake in self.snakes:
             enemy = None
