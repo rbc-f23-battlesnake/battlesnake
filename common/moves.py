@@ -24,8 +24,6 @@ def get_possible_moves(snake: Snake, board: Board):
 
     for m in moves:
          new_head = simulate_move(m, head)
-         
-         print(f"\n\n\nNEW HEAD: {new_head}\n\n\n")
         # don't hit wall
          if new_head[0] == board.width or new_head[1] == board.height:
               continue

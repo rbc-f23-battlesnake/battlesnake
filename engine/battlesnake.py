@@ -37,6 +37,7 @@ class Battlesnake:
         if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
             print("We hungry/small! Growing!")
             if len(self.board.food) > 1:
+                print(f"FOOD LEFT: {len(self.board.food)}")
                 print("No food found")
                 return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
@@ -45,6 +46,7 @@ class Battlesnake:
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("We need to be bigger! Growing!")
             if len(self.board.food) > 1:
+                print(f"FOOD LEFT: {len(self.board.food)}")
                 print("No food found")
                 return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
