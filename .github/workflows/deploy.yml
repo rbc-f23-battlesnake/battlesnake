@@ -9,6 +9,7 @@ on:
       - 'jerome'
       - 'uma'
       - 'timothy'
+      - 'try-minimax'
 
 permissions:
   contents: read
