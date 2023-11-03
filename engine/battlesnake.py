@@ -4,6 +4,7 @@ import common.moves as common
 import numpy as np
 import random
 import typing
+from scipy import spatial
 
 
 moves = ["up", "left", "right", "down"]
@@ -44,22 +45,22 @@ class Battlesnake:
             return self.best_direction_to_food(self.board, preferred_moves)
         
         # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
-        # elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
-        #     #  Move towards 2nd largest enemy snake head
-        #     largest_enemy = self.board.get_largest_enemy_snake()
+        elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
+            #  Move towards 2nd largest enemy snake head
+            largest_enemy = self.board.get_largest_enemy_snake()
             
-        #     # Get array of enemy snakes possible moves (not wall, not neck)
-        #     possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
-        #     possible_enemy_tiles = []
-        #     for m in possible_enemy_moves:
-        #        possible_tile = common.simulate_move(m, largest_enemy.get_head())
-        #        possible_enemy_tiles.append(possible_tile)
-        #     # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
-
-
+            # Get array of enemy snakes possible moves (not wall, not neck)
+            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
+            possible_enemy_tiles = []
+            for m in possible_enemy_moves:
+               possible_tile = common.simulate_move(m, largest_enemy.get_head())
+               possible_enemy_tiles.append(possible_tile)
+            # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
+            target_tile = random.choice(possible_enemy_tiles)
+            
             # What do we need to be careful of when following enemy snake?
 
-            return random.choice(preferred_moves)
+            return self.best_direction_to_target_tile(target_tile, preferred_moves)
 
 
         # Otherwise do random move
@@ -70,7 +71,27 @@ class Battlesnake:
         safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead)]
         return safe_moves
     
-    
+
+    def best_direction_to_target_tile(self, tile, safeMoveChoices):
+        curr_head = self.our_snake.get_head()
+
+        distance_x = abs(curr_head[0] - tile[0])
+        distance_y = abs(curr_head[1] - tile[1])
+
+        our_possible_heads = {}
+        for m in safeMoveChoices:
+            new_head = common.simulate_move(m, curr_head)
+            
+            # move: newHeadTile
+            our_possible_heads[m] = new_head
+        
+        for direction, location in our_possible_heads.items():
+            new_distance_x = abs(location[0] - tile[0])
+            new_distance_y = abs(location[1] - tile[1])
+
+            if new_distance_x < distance_x or new_distance_y < distance_y:
+                return direction
+        
     # Find shortest path to food
     def best_direction_to_food(self, board: Board, moveChoices):
         our_snake = board.get_our_snake()
