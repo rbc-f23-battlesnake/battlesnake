@@ -25,13 +25,19 @@ class Battlesnake:
         
         # Find safe moves
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
-        free_squares = {m: self.get_free_squares(m) for m in safe_moves}
         
         # If making a move will put us in a spot that's really bad (only 1 tile of free space) 
         # then make a potentially unsafe move
-        if (len(safe_moves) == 0 or max(free_squares.values()) <= 2):
+        if (len(safe_moves) == 0):
+            print("LAST DITCH MOVE")
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
-            return random.choice(last_ditch_moves) if last_ditch_moves else "up"
+            return max({m: self.get_free_squares(m) for m in last_ditch_moves}) if last_ditch_moves else "up"
+        
+        free_squares = {m: self.get_free_squares(m) for m in safe_moves}
+        print(free_squares)
+        
+        if (max(free_squares.values()) <= 15):
+            return max(free_squares)
         
         ##############################################################################################
         self.branch_count = 0 # For no longer used feature
@@ -45,7 +51,7 @@ class Battlesnake:
         
         
         # Grow if we are small or have low health
-        if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
+        if self.our_snake.health < 50 or len(self.our_snake.tiles) < 5: 
             print("Growing!")
             return self.best_direction_to_food(preferred_moves)
         
