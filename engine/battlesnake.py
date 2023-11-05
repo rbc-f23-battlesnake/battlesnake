@@ -31,9 +31,11 @@ class Battlesnake:
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
         ##############################################################################################
-        self.branch_count = 0
-        # I don't think we need is_stuck_in_dead_end
-        safest_moves = [] # [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, turns=12, move=m)]
+        self.branch_count = 0 # For no longer used feature
+        
+        free_squares = {m: self.get_free_squares(m) for m in safe_moves}
+        
+        safest_moves = [m for m in free_squares if free_squares[m] > 5]
         preferred_moves = safest_moves if safest_moves else safe_moves
         ##############################################################################################
         
@@ -52,7 +54,7 @@ class Battlesnake:
         # TODO
         
         # Otherwise pick move that gives the most space
-        return self.most_squares_move(moveChoices=preferred_moves)
+        return max(free_squares, key=free_squares.get) # avoid double recompute for self.most_squares_move(moveChoices=preferred_moves)
         
         
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
@@ -60,71 +62,46 @@ class Battlesnake:
         return safe_moves
     
     
-    # Find move that gives most number of controlled squares
     def most_squares_move(self, moveChoices):
         bestMove = moveChoices[0]
-        bestSquares = 0
+        bestSquares = -1
         for move in moveChoices:
-            board_copy = self.board.copy()
-            board_copy.move_snake(self.our_snake.id, move)
-            our_snake_copy = board_copy.get_our_snake()
-            
-            # If this move results in instant death, don't do it
-            # TODO we can probably simulate making all other snakes pick a move that gives them food if they have one
-            if not self.__get_safe_moves(board_copy.get_our_snake(), board_copy, checkHeadOnHead=False):
-                continue
-            
-            # Determine number of tiles our snake can access
-            
-            # Create a board for flood fill algorithm
-            snake_board = [[False for _ in range(board_copy.width)] for _ in range(board_copy.height)]
-            
-            # Populate        
-            for snake in board_copy.snakes:
+            squares = self.get_free_squares(move)
+            if squares > bestSquares:
+                bestMove = move
+        
+        # print(f"Best move is: {bestMove} with {bestSquares} of squares")
+        return bestMove
+    
+    
+    def get_free_squares(self, move):
+        board_copy = self.board.copy()
+        board_copy.move_snake(self.our_snake.id, move)
+        our_snake_copy = board_copy.get_our_snake()
+        
+        # If this move results in instant death, don't do it
+        # TODO we can probably simulate making all other snakes pick a move that gives them food if they have one
+        if not self.__get_safe_moves(board_copy.get_our_snake(), board_copy, checkHeadOnHead=False):
+            return -1
+        
+        # Determine number of tiles our snake can access
+        # Create a board for flood fill algorithm
+        snake_board = [[False for _ in range(board_copy.width)] for _ in range(board_copy.height)]
+        
+        # Populate        
+        for snake in board_copy.snakes:
+            if snake.is_alive:
                 for x, y in snake.tiles:
                     snake_board[y][x] = True
-
-            
-            self.seen = set()
-            self.floodfill(our_snake_copy.tiles[0][0], our_snake_copy.tiles[0][1], snake_board)
-            
-            if len(self.seen) > bestSquares:
-                bestMove = move
-                bestSquares = len(self.seen)
-            
-            
-            # Too slow :((
-            # # Calculate available tiles with bfs
-            # seen = set()
-            # to_visit = []
-            
-            # for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
-            #     if not ((0 <= x + dx < board_copy.width) and (0 <= y + dy < board_copy.height)):
-            #         continue
-            #     # Can't go on top of existing snake
-            #     elif snake_board[y + dy][x + dx]:
-            #         continue
-            #     to_visit.append([x + dx, y + dy])
-            
-            # # do BFS
-            # while to_visit:
-            #     x, y = to_visit.pop(0)
-            #     seen.add((x, y))
-                
-            #     for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
-            #         if (x + dx, y + dy) in seen:
-            #             continue
-            #         elif not ((0 <= x + dx < board_copy.width) and (0 <= y + dy < board_copy.height)):
-            #             continue
-            #         # Can't go on top of existing snake
-            #         elif snake_board[y + dy][x + dx]:
-            #             continue
-                    
-            #         to_visit.append([x + dx, y + dy])
-            # print(seen)
         
-        print(f"Best move is: {bestMove} with {bestSquares} of squares")
-        return bestMove
+        self.seen = set()
+        self.floodfill(our_snake_copy.tiles[0][0], our_snake_copy.tiles[0][1], snake_board)
+        
+        return len(self.seen)
+
+    # Find shortest path to food
+    def best_direction_to_food(self, moveChoices):
+        return self.find_shortest_path_to_tiles(moveChoices, self.board.food)[0]
     
     def floodfill(self, x, y, snake_board):
         for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
@@ -139,16 +116,16 @@ class Battlesnake:
             self.seen.add((x, y))
             self.floodfill(x + dx, y + dy, snake_board)
     
-    # Find shortest path to food
-    def best_direction_to_food(self, moveChoices):
+    # BFS to find shortest path
+    def find_shortest_path_to_tiles(self, initialMoveList, desiredTilesList):
         our_snake = self.our_snake
         visited = set()
         
         initial_head = tuple(our_snake.tiles[0].tolist())
         
         visited.add(initial_head)
-        to_visit = [(our_snake.copy(), [m]) for m in moveChoices]
-        
+        to_visit = [(our_snake.copy(), [m]) for m in initialMoveList]
+    
         while to_visit:
             snake_copy, path = to_visit.pop(0)
             head = snake_copy.tiles[0]
@@ -169,18 +146,18 @@ class Battlesnake:
             
             snake_copy.move(path[-1], self.board.food)
             
-            for f in self.board.food:
+            for f in desiredTilesList:
                 if tuple(f.tolist()) == new_head:
-                    return path[0]
+                    return path
             
             visited.add(new_head)
 
             for m in self.__get_safe_moves(snake_copy, self.board):
                 to_visit.append((snake_copy.copy(), path.copy() + [m]))
 
-        print("Error can't find path to food")
-        return random.choice(moveChoices)     
-
+        # Search failed
+        print("Error can't find path to tile in desiredTilesList")
+        return [random.choice(initialMoveList)]     
 
     def __is_move_safe(self, snake: Snake, move: str, board, checkHeadOnHead=True) -> bool:
         if not snake.is_alive:
@@ -238,7 +215,9 @@ class Battlesnake:
         # print("Move is safe!")
         return True
 
-
+    #####################################################################
+    # Archived Functions                                                #
+    #####################################################################
     # See if the snake still has #<turns> worth of moves to go to
     def is_stuck_in_dead_end(self, snake, turns, move):
         if len(snake.tiles) < 4:
@@ -247,7 +226,6 @@ class Battlesnake:
         snake_moved = snake.copy()
         grown = snake_moved.move(move, self.board.food)[0]
         return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns, grown)
-        
         
     # Requires snake to have moved (safe move)
     def __is_stuck_in_dead_end_wrapped(self, snake, turns, grown=False):
