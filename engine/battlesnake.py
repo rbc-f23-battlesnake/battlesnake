@@ -57,8 +57,10 @@ class Battlesnake:
             if not largest_enemy:
                 print("No large enemy -- opps")
                 return random.choice(preferred_moves)
-            # Get array of enemy snakes possible moves (not wall, not neck)
-            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
+            # Get array of enemy snakes possible moves (not wall, not neck), allow head-on-head because we are always larger
+            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board, False)
+            if not possible_enemy_moves:
+                return random.choice(preferred_moves)
             possible_enemy_tiles = []
             for m in possible_enemy_moves:
                possible_tile = common.simulate_move(m, largest_enemy.get_head())
