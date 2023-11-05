@@ -45,14 +45,14 @@ class Board:
         return self.food.size
 
     def get_largest_enemy_snake(self) -> Snake:
-        for snake in self.snakes:
+        for snake in self.get_other_snakes(self.get_our_snake().id):
             enemy = None
             largest = 0
-            if snake.is_our_snake == False and snake.is_alive:
+            if snake.is_alive:
                 if snake.get_length() > largest:
                     largest = snake.get_length()
                     enemy = snake
-            return enemy
+        return enemy
 
     def get_our_snake(self) -> Snake:
         return [snake for snake in self.snakes if snake.is_our_snake][0]

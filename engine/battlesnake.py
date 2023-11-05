@@ -37,7 +37,6 @@ class Battlesnake:
         if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
             print("We hungry/small! Growing!")
             if self.board.get_food_count() < 1:
-                print(f"FOOD LEFT: {len(self.board.food)}")
                 print("No food found")
                 return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
@@ -46,7 +45,6 @@ class Battlesnake:
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("We need to be bigger! Growing!")
             if self.board.get_food_count() < 1:
-                print(f"FOOD LEFT: {len(self.board.food)}")
                 print("No food found")
                 return random.choice(preferred_moves)
             return self.best_direction_to_food(self.board, preferred_moves)
@@ -56,11 +54,9 @@ class Battlesnake:
             print("Attacking!")
             #  Move towards 2nd largest enemy snake head
             largest_enemy = self.board.get_largest_enemy_snake()
-
             if not largest_enemy:
+                print("No large enemy -- opps")
                 return random.choice(preferred_moves)
-            
-            print(f"LETS ATTACK! {largest_enemy.name}")
             # Get array of enemy snakes possible moves (not wall, not neck)
             possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board)
             possible_enemy_tiles = []
@@ -68,13 +64,11 @@ class Battlesnake:
                possible_tile = common.simulate_move(m, largest_enemy.get_head())
                possible_enemy_tiles.append(possible_tile)
             # Out of the enemy snake's next possible moves, move towards the closest possible move if safe
-            print(f"Their moves are: {possible_enemy_moves}!")
             target_tile = random.choice(possible_enemy_tiles)
             
             # What do we need to be careful of when following enemy snake?
             move = self.best_direction_to_target_tile(target_tile, preferred_moves)
-
-            print(f"LETS ATTACK: Move {move} to {target_tile}!")
+            print("best move is:", move)
             return move
 
         # Otherwise do random move
@@ -90,8 +84,8 @@ class Battlesnake:
     def best_direction_to_target_tile(self, tile, safeMoveChoices):
         curr_head = self.our_snake.get_head()
 
-        distance_x = abs(curr_head[0] - tile[0])
-        distance_y = abs(curr_head[1] - tile[1])
+        distance_x = abs(curr_head[0] - tile[0]) # x distance from head to target tile
+        distance_y = abs(curr_head[1] - tile[1]) # y distance from head to target tile
 
         our_possible_heads = {}
         for m in safeMoveChoices:
@@ -106,6 +100,8 @@ class Battlesnake:
 
             if new_distance_x < distance_x or new_distance_y < distance_y:
                 return direction
+        
+        return random.choice(safeMoveChoices)
         
     # Find shortest path to food
     def best_direction_to_food(self, board: Board, moveChoices):

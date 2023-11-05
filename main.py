@@ -48,9 +48,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
     battle_snake = Battlesnake(game_state)
     best_move = battle_snake.get_best_move()
     print(f"MOVE {game_state['turn']}: " + best_move)
-    
-    our_possible_moves = mv.get_possible_moves(battle_snake.our_snake, battle_snake.board) 
-    print(our_possible_moves)
     return {"move": best_move}
 
 
