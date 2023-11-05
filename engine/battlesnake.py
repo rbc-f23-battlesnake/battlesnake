@@ -36,7 +36,7 @@ class Battlesnake:
         ##############################################################################################
         self.branch_count = 0 # For no longer used feature
         
-        safest_moves = [m for m in free_squares if free_squares[m] > 5]
+        safest_moves = [m for m in free_squares if free_squares[m] > 15]
         preferred_moves = safest_moves if safest_moves else safe_moves
         ##############################################################################################
         
