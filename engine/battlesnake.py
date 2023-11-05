@@ -29,7 +29,7 @@ class Battlesnake:
         
         # If making a move will put us in a spot that's really bad (only 1 tile of free space) 
         # then make a potentially unsafe move
-        if (len(safe_moves) == 0 or max(free_squares) <= 2):
+        if (len(safe_moves) == 0 or max(free_squares.values()) <= 2):
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
@@ -55,7 +55,7 @@ class Battlesnake:
             return self.best_direction_to_food(preferred_moves)
         
         # Otherwise pick move that gives the most space
-        return max(free_squares, key=free_squares.get) # avoid double recompute for self.most_squares_move(moveChoices=preferred_moves)
+        return max(free_squares) # avoid double recompute for self.most_squares_move(moveChoices=preferred_moves)
         
         
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
@@ -182,7 +182,7 @@ class Battlesnake:
             return False
         
         # Check if snake collides with itself
-        for tile in snake_copy.tiles[2:]:
+        for tile in snake_copy.tiles[1:]:
             if np.array_equal(head, tile):
                 # print("move not safe, self collision")
                 return False
