@@ -25,19 +25,24 @@ class Battlesnake:
         
         # Find safe moves
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
+        free_squares = {m: self.get_free_squares(m) for m in safe_moves}
         
-        if (len(safe_moves) == 0):
+        # If making a move will put us in a spot that's really bad (only 1 tile of free space) 
+        # then make a potentially unsafe move
+        if (len(safe_moves) == 0 or max(free_squares) <= 2):
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
         ##############################################################################################
         self.branch_count = 0 # For no longer used feature
         
-        free_squares = {m: self.get_free_squares(m) for m in safe_moves}
-        
         safest_moves = [m for m in free_squares if free_squares[m] > 5]
         preferred_moves = safest_moves if safest_moves else safe_moves
         ##############################################################################################
+        
+        # If we can possibly kill a snake, do it
+        # TODO
+        
         
         # Grow if we are small or have low health
         if self.our_snake.health < 20 or len(self.our_snake.tiles) < 5: 
@@ -48,10 +53,6 @@ class Battlesnake:
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("Growing!")
             return self.best_direction_to_food(preferred_moves)
-
-
-        # If we can possibly kill a snake, do it
-        # TODO
         
         # Otherwise pick move that gives the most space
         return max(free_squares, key=free_squares.get) # avoid double recompute for self.most_squares_move(moveChoices=preferred_moves)
