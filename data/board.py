@@ -36,8 +36,8 @@ class Board:
         
         board.width = self.width
         board.height = self.height
-        board.food = self.food.copy()
-        board.snakes = self.snakes.copy()
+        board.food = np.copy(self.food)
+        board.snakes = np.asarray([s.copy() for s in self.snakes])
         board.turn = self.turn
         return board
     
@@ -71,16 +71,17 @@ class Board:
     def adjudicate_board(self):
         for snake in self.snakes:
             if not snake.is_alive:
+                # print("Snake already dead")
                 continue
             
-            elif snake.health == 0:
+            elif snake.health <= 0:
                 snake.tiles = np.ndarray([])
                 snake.is_alive = False
                 continue
             
             head = snake.tiles[0]
             # Check if snake collides with itself
-            for tile in snake.tiles[2:]:
+            for tile in snake.tiles[1:]:
                 if np.array_equal(head, tile):
                     snake.tiles = np.ndarray([])
                     snake.is_alive = False
