@@ -109,7 +109,7 @@ class Battlesnake:
     
     def minimax(self, depth: int, board: Board, isOurSnake: bool, move: str):
         other_snakes = board.get_other_snakes(board.get_our_snake().id)
-        other_snake_moves = [self.__get_safe_moves(s, board, False) for s in board.get_other_snakes(board.get_our_snake().id)]
+        other_snake_moves = [self.__get_safe_moves(s, board, False) for s in other_snakes]
 
         if depth == 0 or not board.get_our_snake().is_alive or len([s for s in other_snakes if s.is_alive]) == 0 or len(self.__get_safe_moves(board.get_our_snake(), board, checkHeadOnHead=False)) == 0:
             return self.__get_score(board.get_our_snake().id, board, move)
@@ -125,10 +125,14 @@ class Battlesnake:
         other_snakes = other_snakes_new
         other_snake_moves = other_snake_moves_new
         
-        move_combos = list(itertools.product(*other_snake_moves))
+        other_snakes_new = []
+        other_snake_moves_new = []
         
+        move_combos = list(itertools.product(*other_snake_moves))
     
         # Minimax - spawn child process for each possible child node
+        value = -inf if isOurSnake else inf
+        
         for move_combo in move_combos:
             # print(move_combo)
             child_base_board = board.copy()
@@ -142,12 +146,11 @@ class Battlesnake:
             child_base_board.adjudicate_board()
             
             if isOurSnake:
-                value = -inf
                 for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
                     child_board = child_base_board.copy()
                     value = maximum(value, self.minimax(depth - 1, child_board, False, move))
+                return value
             else:
-                value = inf
                 for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
                     child_board = child_base_board.copy()
                     value = minimum(value, self.minimax(depth - 1, child_board, True, move))
@@ -190,8 +193,8 @@ class Battlesnake:
         for snake in board_copy.snakes:
             if snake.is_alive:
                 for x, y in snake.tiles:
-                    if x not in range(10) or y not in range(10):
-                        return -1
+                    if x not in range(self.board.width) or y not in range(self.board.height):
+                        return -2
                     snake_board[y][x] = True
         
         self.seen = set()
