@@ -43,19 +43,18 @@ class Board:
     
     
     def get_our_snake(self) -> Snake:
-        return [snake for snake in self.snakes if snake.is_our_snake][0]
+        for s in self.snakes:
+            if s.is_our_snake:
+                return s
     
     
     def get_snake(self, snake_id: str):
-        return [s for s in self.snakes if s.id == snake_id][0]
-    
+        for s in self.snakes:
+            if s.id == snake_id:
+                return s
     
     def get_other_snakes(self, snake_id: str) -> np.ndarray:
-        other_snakes = []
-        for snake in self.snakes:
-            if snake.is_alive and snake.id != snake_id:
-                other_snakes.append(snake)
-        return np.asarray(other_snakes)
+        return np.asarray([s for s in self.snakes if s.is_alive and s.id != snake_id])
     
     
     # Preferred method of moving the snake

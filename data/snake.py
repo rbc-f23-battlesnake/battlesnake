@@ -17,7 +17,7 @@ class Snake:
             self.is_alive = True
             self.has_killed = False
             # The head is always the first index in the body
-            self.tiles = np.asarray([np.array([posn['x'], posn['y']]) for posn in args[0]['body']])
+            self.tiles = np.asarray([np.asarray([posn['x'], posn['y']]) for posn in args[0]['body']])
 
 
     def copy(self) -> 'Snake':

@@ -4,7 +4,7 @@ from data.snake import Snake
 import numpy as np
 import random
 import typing
-import math
+import concurrent.futures
 
 from math import inf
 from numpy import minimum, maximum
@@ -44,18 +44,22 @@ class Battlesnake:
         best_value = -inf
         move_scores = {m: 0 for m in safe_moves}
         
+        # Set up minimax threads
+        minimax = self.minimax
+
+        args = []
         for move in safe_moves:
             board_copy = self.board.copy()
-            value = self.minimax(depth, -inf, inf, board_copy, True, move)
-            move_scores[move] = value
+            args.append([depth, -inf, inf, board_copy, True, move])
             
-            if value >= best_value:
-                best_value = value
-                best_move = move
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(minimax, *arg) for arg in args]
 
-        print("Minimax")
-        print(move_scores)
-        return best_move
+            move_scores = {safe_moves[i]: f.result() for i, f in enumerate(futures)}
+
+            print("Minimax")
+            print(move_scores)
+            return max(move_scores, key=move_scores.get)
     
     
     def __get_score(self, snakeId: str, original_board: Board, move: str) -> float:
