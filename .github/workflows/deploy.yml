@@ -9,6 +9,7 @@ on:
       - 'jerome'
       - 'uma'
       - 'timothy'
+      - 'minimax-electric-boogaloo'
 
 permissions:
   contents: read
