@@ -6,6 +6,7 @@ import random
 import typing
 import concurrent.futures
 
+from time import time
 from math import inf
 from numpy import minimum, maximum
 import itertools
@@ -63,6 +64,7 @@ class Battlesnake:
     
     
     def __get_score(self, snakeId: str, original_board: Board, move: str) -> float:
+        start = time()
         score = 0
         board = original_board.copy()
         snake = board.get_snake(snakeId)
@@ -82,6 +84,8 @@ class Battlesnake:
         if move == self.best_direction_to_food(moves, original_board):
             if snake.health < 50:
                 score += 25
+                if has_grown:
+                    score += 35
             
             # We should be the largest snake
             if len(board.get_other_snakes(self.our_snake.id)) >= 1 and len(snake.tiles) < 1 + max([len(s.tiles) for s in board.get_other_snakes(self.our_snake.id)]):
@@ -91,9 +95,7 @@ class Battlesnake:
         free_squares = self.get_free_squares(move, original_board)
         # print(f'Move: {move} - free squares: {free_squares}')
         score += free_squares
-        
-        
-        
+
         for other_snake in other_snakes:
             other_snake_head = other_snake.tiles[0]
             distance = abs(our_head[0] - other_snake_head[0]) + abs(our_head[1] - other_snake_head[1])
@@ -113,7 +115,8 @@ class Battlesnake:
         
         # elif our_head[0] == 0 or our_head[0] == board.width - 1 or our_head[1] == 0 or our_head[1] == board.height:
         #     score -= 10
-            
+        end = time()
+        # print(f"Score algorithm took: {end-start}") # Negligible
         return score
     
     def minimax(self, depth: int, alpha, beta, board: Board, isOurSnake: bool, move: str):
@@ -122,7 +125,7 @@ class Battlesnake:
 
         if depth == 0 or not board.get_our_snake().is_alive or len([s for s in other_snakes if s.is_alive]) == 0 or len(self.__get_safe_moves(board.get_our_snake(), board, checkHeadOnHead=False)) == 0:
             return self.__get_score(board.get_our_snake().id, board, move)
-        
+
         # Take our other_snakes if other_snake_moves is empty
         other_snakes_new = []
         other_snake_moves_new = []
@@ -136,10 +139,8 @@ class Battlesnake:
         
         other_snakes_new = []
         other_snake_moves_new = []
-        
         move_combos = list(itertools.product(*other_snake_moves))
         # print(move_combos)
-    
         # Minimax - spawn child process for each possible child node
         value = -inf if isOurSnake else inf
         
