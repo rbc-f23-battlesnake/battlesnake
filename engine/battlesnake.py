@@ -53,7 +53,7 @@ class Battlesnake:
             board_copy = self.board.copy()
             args.append([depth, -inf, inf, board_copy, True, move])
             
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(8) as executor:
             futures = [executor.submit(minimax, *arg) for arg in args]
 
             move_scores = {safe_moves[i]: f.result() for i, f in enumerate(futures)}
