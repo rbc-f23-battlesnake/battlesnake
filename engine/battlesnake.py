@@ -96,18 +96,18 @@ class Battlesnake:
         # print(f'Move: {move} - free squares: {free_squares}')
         score += free_squares
 
-        for other_snake in other_snakes:
-            other_snake_head = other_snake.tiles[0]
-            distance = abs(our_head[0] - other_snake_head[0]) + abs(our_head[1] - other_snake_head[1])
+        # for other_snake in other_snakes:
+        #     other_snake_head = other_snake.tiles[0]
+        #     distance = abs(our_head[0] - other_snake_head[0]) + abs(our_head[1] - other_snake_head[1])
 
-            if distance <= 3:
-                # Penalize if we get too close to snakes
-                if (len(other_snake.tiles)) > len(snake.tiles):
-                    score -= 5
+        #     if distance <= 3:
+        #         # Penalize if we get too close to snakes
+        #         if (len(other_snake.tiles)) > len(snake.tiles):
+        #             score -= 5
                 
-                # If we are near another snake's head that is shorter, reward
-                else:
-                    score += 15
+        #         # If we are near another snake's head that is shorter, reward
+        #         else:
+        #             score += 15
         
         # # Stay away from corners
         # if (our_head[0] in range(0, 2) or our_head[0] in range(board.width - 2, board.width)) and (our_head[1] in range(0, 2) or our_head[1] in range(board.height - 2, board.height)):
