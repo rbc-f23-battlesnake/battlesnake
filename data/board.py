@@ -1,5 +1,4 @@
 from data.snake import Snake
-from copy import deepcopy
 
 class Board:
     def __init__(self, *args):
@@ -34,7 +33,7 @@ class Board:
         
         board.width = self.width
         board.height = self.height
-        board.food = deepcopy(self.food)
+        board.food = self.food.copy()
         board.snakes = [s.copy() for s in self.snakes]
         board.turn = self.turn
         return board

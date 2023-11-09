@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 class Snake:
     def __init__(self, *args): # (self, snake_data: typing.Dict, our_snake: bool = False):
         if (len(args)) == 0:
@@ -24,7 +22,7 @@ class Snake:
         snake.health = self.health
         snake.id = self.id
         snake.is_our_snake = self.is_our_snake
-        snake.tiles = deepcopy(self.tiles)
+        snake.tiles = self.tiles.copy()
         snake.is_alive = self.is_alive
         snake.has_killed = self.has_killed
         return snake
@@ -36,20 +34,25 @@ class Snake:
         self.health -= 1
         
         new_head = (-1, -1)
-        match direction:
-            case 'up':
-                new_head = (self.tiles[0][0], self.tiles[0][1] + 1)
-            case 'down':
-                new_head = (self.tiles[0][0], self.tiles[0][1] - 1)
-            case 'left':
-                new_head = (self.tiles[0][0] - 1, self.tiles[0][1])
-            case 'right':
-                new_head = (self.tiles[0][0] + 1, self.tiles[0][1])
+        
+        direction_mapping = {
+            'up': (0, 1),
+            'down': (0, -1),
+            'left': (-1, 0),
+            'right': (1, 0)
+        }
+        
+        if direction in direction_mapping:
+            new_head = (
+                self.tiles[0][0] + direction_mapping[direction][0],
+                self.tiles[0][1] + direction_mapping[direction][1]
+            )
+
         grown = False
         
         # Eating food        
         for food_dot in food:
-            if new_head[0] == food_dot[0] and new_head[1] == food_dot[1]:
+            if new_head == food_dot:
                 self.health = 100
                 grown = True
                 # remove food from the board
