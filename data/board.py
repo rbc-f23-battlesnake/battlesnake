@@ -1,5 +1,5 @@
 from data.snake import Snake
-import numpy as np
+from copy import deepcopy
 
 class Board:
     def __init__(self, *args):
@@ -34,7 +34,7 @@ class Board:
         
         board.width = self.width
         board.height = self.height
-        board.food = [tuple(f) for f in self.food]
+        board.food = deepcopy(self.food)
         board.snakes = [s.copy() for s in self.snakes]
         board.turn = self.turn
         return board

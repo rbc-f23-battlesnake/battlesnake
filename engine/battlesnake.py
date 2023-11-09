@@ -12,8 +12,10 @@ from numpy import minimum, maximum
 import itertools
 
 moves = ["up", "left", "right", "down"]
-BRANCH_LIMIT = 1800
 depth = 0
+
+# Not used anymore
+BRANCH_LIMIT = 1800
 
 class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
@@ -62,7 +64,6 @@ class Battlesnake:
     
     
     def __get_score(self, snakeId: str, original_board: Board, move: str) -> float:
-        start = time()
         score = 0
         board = original_board.copy()
         snake = board.get_snake(snakeId)
@@ -72,9 +73,6 @@ class Battlesnake:
         
         if not snake.is_alive:
             return -inf
-                
-        other_snakes = board.get_other_snakes(snake.id)
-        our_head = snake.tiles[0]
 
         if snake.has_killed:
             score += 150
@@ -113,7 +111,6 @@ class Battlesnake:
         
         # elif our_head[0] == 0 or our_head[0] == board.width - 1 or our_head[1] == 0 or our_head[1] == board.height:
         #     score -= 10
-        end = time()
         # print(f"Score algorithm took: {end-start}") # Negligible
         return score
     
@@ -138,7 +135,7 @@ class Battlesnake:
         other_snakes_new = []
         other_snake_moves_new = []
         move_combos = list(itertools.product(*other_snake_moves))
-        # print(move_combos)
+
         # Minimax - spawn child process for each possible child node
         value = -inf if isOurSnake else inf
         
@@ -147,7 +144,6 @@ class Battlesnake:
             if alphaBetaStop:
                 break
             
-            # print(move_combo)
             child_base_board = board.copy()
             
             # Move other snakes - our snake hasn't moved yet
@@ -226,7 +222,8 @@ class Battlesnake:
 
     # Find shortest path to food
     def best_direction_to_food(self, moveChoices, board=None):
-        return self.find_shortest_path_to_tiles(moveChoices, board.food if board is not None else self.board.food)[0]
+        path = self.find_shortest_path_to_tiles(moveChoices, board.food if board is not None else self.board.food)
+        return path[0]
     
     def floodfill(self, x, y, snake_board):
         for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:

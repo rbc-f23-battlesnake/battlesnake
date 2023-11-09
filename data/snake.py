@@ -1,4 +1,4 @@
-import typing
+from copy import deepcopy
 
 class Snake:
     def __init__(self, *args): # (self, snake_data: typing.Dict, our_snake: bool = False):
@@ -24,7 +24,7 @@ class Snake:
         snake.health = self.health
         snake.id = self.id
         snake.is_our_snake = self.is_our_snake
-        snake.tiles = [tuple(t) for t in self.tiles]
+        snake.tiles = deepcopy(self.tiles)
         snake.is_alive = self.is_alive
         snake.has_killed = self.has_killed
         return snake
