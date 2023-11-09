@@ -1,11 +1,11 @@
 from data.board import Board
 from data.snake import Snake
 
-import numpy as np
 import random
 import typing
 import concurrent.futures
 
+from collections import deque
 from time import time
 from math import inf
 from numpy import minimum, maximum
@@ -41,8 +41,6 @@ class Battlesnake:
         #############################
         # Minimax                   #
         #############################
-        best_move = safe_moves[0]
-        best_value = -inf
         move_scores = {m: 0 for m in safe_moves}
         
         # Set up minimax threads
@@ -182,7 +180,7 @@ class Battlesnake:
                     
 
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
-        safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead)]
+        safe_moves = set([m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead)])
         return safe_moves
     
     
@@ -252,13 +250,13 @@ class Battlesnake:
         our_snake = self.our_snake
         visited = set()
         
-        initial_head = tuple(our_snake.tiles[0].tolist())
+        initial_head = our_snake.tiles[0]
         
         visited.add(initial_head)
-        to_visit = [(our_snake.copy(), [m]) for m in initialMoveList]
+        to_visit = deque([(our_snake.copy(), [m]) for m in initialMoveList])
     
         while to_visit:
-            snake_copy, path = to_visit.pop(0)
+            snake_copy, path = to_visit.popleft()
             head = snake_copy.tiles[0]
 
             new_head = (-1, -1)
@@ -278,7 +276,7 @@ class Battlesnake:
             snake_copy.move(path[-1], self.board.food)
             
             for f in desiredTilesList:
-                if tuple(f.tolist()) == new_head:
+                if f == new_head:
                     return path
             
             visited.add(new_head)
@@ -302,7 +300,7 @@ class Battlesnake:
         head = snake_copy.tiles[0]
         
         # Check boundaries
-        if head[0] not in range(0, board.width) or head[1] not in range(0, board.height):
+        if not (0 <= head[0] < board.width) or not (0 <= head[1] < board.height):
             # print("move not safe, boundaries")
             return False
         
@@ -313,7 +311,7 @@ class Battlesnake:
         
         # Check if snake collides with itself
         for tile in snake_copy.tiles[1:]:
-            if np.array_equal(head, tile):
+            if head == tile:
                 # print("move not safe, self collision")
                 return False
         
@@ -321,7 +319,7 @@ class Battlesnake:
         # Check if snake can possibly collide with other snakes' bodies
         for other_snake in other_snakes:
             for tile in other_snake.tiles[1:-1]:
-                if np.array_equal(tile, head):
+                if head == tile:
                     # print("Move not safe, other snake collision")
                     return False
                         
@@ -334,13 +332,13 @@ class Battlesnake:
                 
                 
                 # Head-to-head possibility
-                if checkHeadOnHead and np.array_equal(head, other_snake_copy.tiles[0]):
+                if checkHeadOnHead and head == other_snake_copy.tiles[0]:
                     if len(snake_copy.tiles) <= len(other_snake_copy.tiles):
                         # print("Move not safe, head to head loss")
                         return False
 
                 # Tail collision if snake has grown
-                if (other_snake_has_grown or np.array_equal(other_snake_copy.tiles[-1], other_snake_copy.tiles[-2])) and np.array_equal(head, other_snake_copy.tiles[-1]):
+                if (other_snake_has_grown or other_snake_copy.tiles[-1] == other_snake_copy.tiles[-2]) and head == other_snake_copy.tiles[-1]:
                     # print("move not safe, tail collision")
                     return False
         # print("Move is safe!")
@@ -384,12 +382,12 @@ class Battlesnake:
             
             # Check if snake collides with itself
             if grown:
-                if np.array_equal(head, snake_copy.tiles[-1]):
+                if head == snake_copy.tiles[-1]:
                     continue
             
             collide = False
-            for tile in snake_copy.tiles[2:]:
-                if np.array_equal(head, tile):
+            for tile in snake_copy.tiles[1:]:
+                if head == tile:
                     collide = True
                     break
             if collide:
