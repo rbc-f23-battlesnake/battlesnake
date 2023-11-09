@@ -163,16 +163,18 @@ class Battlesnake:
             if isOurSnake:
                 for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
                     child_board = child_base_board.copy()
-                    value = maximum(value, self.minimax(depth - 1, alpha, beta, child_board, False, move))
-                    alpha = maximum(alpha, value)
+                    eval = self.minimax(depth - 1, alpha, beta, child_board, False, move)
+                    value = maximum(value, eval)
+                    alpha = maximum(alpha, eval)
                     if value >= beta:
                         alphaBetaStop = True
                         break
             else:
                 for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
                     child_board = child_base_board.copy()
-                    value = minimum(value, self.minimax(depth - 1, alpha, beta, child_board, True, move))
-                    beta = minimum(beta, value)
+                    eval = self.minimax(depth - 1, alpha, beta, child_board, True, move)
+                    value = minimum(value, eval)
+                    beta = minimum(beta, eval)
                     if value <= alpha:
                         alphaBetaStop = True
                         break
