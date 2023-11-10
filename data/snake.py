@@ -26,27 +26,24 @@ class Snake:
         snake.is_alive = self.is_alive
         snake.has_killed = self.has_killed
         return snake
-
-
+            
     # when we move the snake we just delete the tail and add a new head in the direction we are going
     # return value is a tuple of (did we grow?, new food list)
     def move(self, direction, food):
+        
         self.health -= 1
-        
-        new_head = (-1, -1)
-        
+
         direction_mapping = {
             'up': (0, 1),
             'down': (0, -1),
             'left': (-1, 0),
             'right': (1, 0)
         }
-        
-        if direction in direction_mapping:
-            new_head = (
-                self.tiles[0][0] + direction_mapping[direction][0],
-                self.tiles[0][1] + direction_mapping[direction][1]
-            )
+
+        new_head = (
+            self.tiles[0][0] + direction_mapping[direction][0],
+            self.tiles[0][1] + direction_mapping[direction][1]
+        )
 
         grown = False
         

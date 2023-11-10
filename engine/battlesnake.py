@@ -63,6 +63,65 @@ class Battlesnake:
             return max(move_scores, key=move_scores.get)
     
     
+            #############################
+            # Return best move here     #
+            #############################
+
+
+    # See if the snake still has #<turns> worth of moves to go to
+    # Recommended turns: 15-18
+    def is_stuck_in_dead_end(self, snake, turns, move):
+        if len(snake.tiles) < 4:
+            return False
+        
+        snake_moved = snake.copy()
+        grown = snake_moved.move(move, self.board.food)[0]
+        return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns, grown)
+        
+        
+    # Requires snake to have moved (safe move)
+    def __is_stuck_in_dead_end_wrapped(self, snake, turns, grown=False):
+        
+        if turns == 0:
+            return False
+        
+        stuck = True
+        for move in moves:
+            if self.branch_count == BRANCH_LIMIT:
+                # print("Reached branch limit")
+                return True
+            
+            self.branch_count += 1
+            if not stuck:
+                return False
+            
+            snake_copy = snake.copy()
+            snake_copy.move(move, self.board.food)
+            head = snake_copy.tiles[0]
+            
+            # Check boundaries
+            if head[0] not in range(0, self.board.width) or head[1] not in range(0, self.board.height):
+                continue
+            
+            # Check if snake collides with itself
+            if grown:
+                if head == snake_copy.tiles[-1]:
+                    continue
+            
+            collide = False
+            for tile in snake_copy.tiles[1:]:
+                if head == tile:
+                    collide = True
+                    break
+            if collide:
+                continue
+            
+            stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
+
+        return stuck
+
+
+    # For minimax
     def __get_score(self, snakeId: str, original_board: Board, move: str) -> float:
         score = 0
         board = original_board.copy()
@@ -223,6 +282,7 @@ class Battlesnake:
     # Find shortest path to food
     def best_direction_to_food(self, moveChoices, board=None):
         path = self.find_shortest_path_to_tiles(moveChoices, board.food if board is not None else self.board.food)
+        # print(path)
         return path[0]
     
     def floodfill(self, x, y, snake_board):
@@ -254,18 +314,18 @@ class Battlesnake:
     
         while to_visit:
             snake_copy, path = to_visit.popleft()
-            head = snake_copy.tiles[0]
 
-            new_head = (-1, -1)
-            match path[-1]:
-                case 'up':
-                    new_head = (head[0], head[1] + 1)
-                case 'down':
-                    new_head = (head[0], head[1] - 1)
-                case 'left':
-                    new_head = (head[0] - 1, head[1])
-                case 'right':
-                    new_head = (head[0] + 1, head[1])
+            direction_mapping = {
+                'up': (0, 1),
+                'down': (0, -1),
+                'left': (-1, 0),
+                'right': (1, 0)
+            }
+        
+            new_head = (
+                snake_copy.tiles[0][0] + direction_mapping[path[-1]][0],
+                snake_copy.tiles[0][1] + direction_mapping[path[-1]][1]
+            )
 
             if new_head in visited:
                 continue
