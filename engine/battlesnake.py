@@ -29,43 +29,29 @@ class Battlesnake:
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
-        
-        # Find safe moves
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
+
+        self.branch_count = 0
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 17, m)]
+
+        preferred_moves = safest_moves if safest_moves else safe_moves
         
-        # If making a move will put us in a spot that's really bad (only 1 tile of free space) 
-        # then make a potentially unsafe move
-        if (len(safe_moves) == 0):
-            print("LAST DITCH MOVE")
+        if (len(preferred_moves) == 0):
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
-            return max({m: self.get_free_squares(m) for m in last_ditch_moves}) if last_ditch_moves else "up"
+            return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
-        #############################
-        # Minimax                   #
-        #############################
-        move_scores = {m: 0 for m in safe_moves}
+        # Grow if we are small or have low health
+        if self.our_snake.health < 30 or len(self.our_snake.tiles) < 5: 
+            print("Growing!")
+            return self.best_direction_to_food(self.board, preferred_moves)
         
-        # Set up minimax threads
-        minimax = self.minimax
+        # If we aren't the largest snake by at least 2 points, we need to be
+        elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
+            print("Growing!")
+            return self.best_direction_to_food(self.board, preferred_moves)
 
-        args = []
-        for move in safe_moves:
-            board_copy = self.board.copy()
-            args.append([depth, -inf, inf, board_copy, True, move])
-            
-        with concurrent.futures.ThreadPoolExecutor(8) as executor:
-            futures = [executor.submit(minimax, *arg) for arg in args]
-
-            move_scores = {safe_moves[i]: f.result() for i, f in enumerate(futures)}
-
-            print("Minimax")
-            print(move_scores)
-            return max(move_scores, key=move_scores.get)
-    
-    
-            #############################
-            # Return best move here     #
-            #############################
+        # Otherwise do random move
+        return random.choice(preferred_moves)
 
 
     # See if the snake still has #<turns> worth of moves to go to
