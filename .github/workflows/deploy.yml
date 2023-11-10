@@ -10,6 +10,7 @@ on:
       - 'uma'
       - 'timothy'
       - 'minimax-electric-boogaloo'
+      - 'try-minimax'
 
 permissions:
   contents: read
