@@ -43,12 +43,12 @@ class Battlesnake:
         # Grow if we are small or have low health
         if self.our_snake.health < 30 or len(self.our_snake.tiles) < 5: 
             print("Growing!")
-            return self.best_direction_to_food(self.board, preferred_moves)
+            return self.best_direction_to_food(preferred_moves)
         
         # If we aren't the largest snake by at least 2 points, we need to be
         elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("Growing!")
-            return self.best_direction_to_food(self.board, preferred_moves)
+            return self.best_direction_to_food(preferred_moves)
 
         # Otherwise do random move
         return random.choice(preferred_moves)
@@ -267,7 +267,7 @@ class Battlesnake:
 
     # Find shortest path to food
     def best_direction_to_food(self, moveChoices, board=None):
-        path = self.find_shortest_path_to_tiles(moveChoices, board.food if board is not None else self.board.food)
+        path = self.find_shortest_path_to_tiles(moveChoices, board.food.copy() if board is not None else self.board.food.copy())
         # print(path)
         return path[0]
     
@@ -289,7 +289,7 @@ class Battlesnake:
         if len(desiredTilesList) == 0:
             # print("ERROR: No tiles in desiredTilesList")
             return [random.choice(initialMoveList)] 
-        
+
         our_snake = self.our_snake
         visited = set()
         
@@ -300,7 +300,6 @@ class Battlesnake:
     
         while to_visit:
             snake_copy, path = to_visit.popleft()
-
             direction_mapping = {
                 'up': (0, 1),
                 'down': (0, -1),
@@ -325,7 +324,7 @@ class Battlesnake:
             visited.add(new_head)
 
             for m in self.__get_safe_moves(snake_copy, self.board):
-                to_visit.append((snake_copy.copy(), path.copy() + [m]))
+                to_visit.append((snake_copy.copy(), path + [m]))
 
         # Search failed
         # print("Error can't find path to tile in desiredTilesList")
