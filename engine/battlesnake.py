@@ -32,7 +32,7 @@ class Battlesnake:
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
 
         self.branch_count = 0
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 17, m)]
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 35, m)]
 
         preferred_moves = safest_moves if safest_moves else safe_moves
         
