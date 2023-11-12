@@ -3,7 +3,6 @@ from data.snake import Snake
 
 import random
 import typing
-import concurrent.futures
 
 from collections import deque
 from time import time
@@ -24,49 +23,42 @@ class Battlesnake:
         self.seen = set()
         self.shortest_path = []
 
-
     ##############################
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
 
-        self.branch_count = 0
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 35, m)]
-
-        preferred_moves = safest_moves if safest_moves else safe_moves
-        
-        if (len(preferred_moves) == 0):
+        if (len(safe_moves) == 0):
             last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
-        # Grow if we are small or have low health
-        if self.our_snake.health < 30 or len(self.our_snake.tiles) < 5: 
-            print("Growing!")
-            return self.best_direction_to_food(preferred_moves)
+        self.branch_count = 0
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 18, m)]
+
+        if len(safest_moves) == 0:
+            return self.most_squares_move(safe_moves)
         
-        # If we aren't the largest snake by at least 2 points, we need to be
-        elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
-            print("Growing!")
-            return self.best_direction_to_food(preferred_moves)
+        preferred_moves = safest_moves if safest_moves else safe_moves
 
         # Otherwise do random move
         return random.choice(preferred_moves)
 
 
     # See if the snake still has #<turns> worth of moves to go to
-    # Recommended turns: 15-18
+    # DFS to find if a branch of length 
     def is_stuck_in_dead_end(self, snake, turns, move):
+        # Base cases
         if len(snake.tiles) < 4:
             return False
         
         snake_moved = snake.copy()
-        grown = snake_moved.move(move, self.board.food)[0]
-        return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns, grown)
+        snake_moved.move(move, self.board.food)
+        return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns)
         
         
     # Requires snake to have moved (safe move)
-    def __is_stuck_in_dead_end_wrapped(self, snake, turns, grown=False):
+    def __is_stuck_in_dead_end_wrapped(self, snake, turns):
         
         if turns == 0:
             return False
@@ -89,11 +81,7 @@ class Battlesnake:
             if head[0] not in range(0, self.board.width) or head[1] not in range(0, self.board.height):
                 continue
             
-            # Check if snake collides with itself
-            if grown:
-                if head == snake_copy.tiles[-1]:
-                    continue
-            
+            # Check self-collision
             collide = False
             for tile in snake_copy.tiles[1:]:
                 if head == tile:
@@ -229,7 +217,7 @@ class Battlesnake:
         bestMove = moveChoices[0]
         bestSquares = -1
         for move in moveChoices:
-            squares = self.get_free_squares(move)
+            squares = self.get_free_squares(move, self.board.copy())
             if squares > bestSquares:
                 bestMove = move
         
@@ -237,8 +225,8 @@ class Battlesnake:
         return bestMove
     
     
-    def get_free_squares(self, move, board=None):
-        board_copy = board.copy() if board is not None else self.board.copy() # Dw bout it
+    def get_free_squares(self, move, board):
+        board_copy = board.copy()
         
         board_copy.move_snake(self.our_snake.id, move)
         our_snake_copy = board_copy.get_our_snake()
@@ -266,8 +254,9 @@ class Battlesnake:
         return len(self.seen)
 
     # Find shortest path to food
-    def best_direction_to_food(self, moveChoices, board=None):
-        path = self.find_shortest_path_to_tiles(moveChoices, board.food.copy() if board is not None else self.board.food.copy())
+    def best_direction_to_food(self, moveChoices, board):
+
+        path = self.find_shortest_path_to_tiles(moveChoices, board.food)
         # print(path)
         return path[0]
     
@@ -385,56 +374,3 @@ class Battlesnake:
                     return False
         # print("Move is safe!")
         return True
-
-    #####################################################################
-    # Archived Functions                                                #
-    #####################################################################
-    # See if the snake still has #<turns> worth of moves to go to
-    def is_stuck_in_dead_end(self, snake, turns, move):
-        if len(snake.tiles) < 4:
-            return False
-        
-        snake_moved = snake.copy()
-        grown = snake_moved.move(move, self.board.food)[0]
-        return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns, grown)
-        
-    # Requires snake to have moved (safe move)
-    def __is_stuck_in_dead_end_wrapped(self, snake, turns, grown=False):
-        
-        if turns == 0:
-            return False
-        
-        stuck = True
-        for move in moves:
-            if self.branch_count == BRANCH_LIMIT:
-                # print("Reached branch limit")
-                return True
-            
-            self.branch_count += 1
-            if not stuck:
-                return False
-            
-            snake_copy = snake.copy()
-            snake_copy.move(move, self.board.food)
-            head = snake_copy.tiles[0]
-            
-            # Check boundaries
-            if head[0] not in range(0, self.board.width) or head[1] not in range(0, self.board.height):
-                continue
-            
-            # Check if snake collides with itself
-            if grown:
-                if head == snake_copy.tiles[-1]:
-                    continue
-            
-            collide = False
-            for tile in snake_copy.tiles[1:]:
-                if head == tile:
-                    collide = True
-                    break
-            if collide:
-                continue
-            
-            stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
-
-        return stuck
