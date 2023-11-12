@@ -33,7 +33,7 @@ class Board:
         
         board.width = self.width
         board.height = self.height
-        board.food = self.food.copy()
+        board.food = [tuple(f) for f in self.food]
         board.snakes = [s.copy() for s in self.snakes]
         board.turn = self.turn
         return board
@@ -58,7 +58,7 @@ class Board:
     def move_snake(self, snake_id: str, direction: str) -> None:
         for snake in self.snakes:
             if snake.is_alive and snake.id == snake_id:
-                has_grown, self.food = snake.move(direction, self.food)
+                has_grown, self.food = snake.move(direction, self.food, editBoard=True)
                 return has_grown
 
 
