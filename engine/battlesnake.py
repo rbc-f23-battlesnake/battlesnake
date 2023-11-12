@@ -54,6 +54,7 @@ class Battlesnake:
         
         snake_moved = snake.copy()
         snake_moved.move(move, self.board.food)
+            
         return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns)
         
         
@@ -209,7 +210,7 @@ class Battlesnake:
                     
 
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
-        safe_moves = set([m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead)])
+        safe_moves = (m for m in moves if self.__is_move_safe(snake, m, board.copy(), checkHeadOnHead))
         return safe_moves
     
     
