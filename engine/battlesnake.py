@@ -3,17 +3,16 @@ from data.snake import Snake
 
 import random
 import typing
+import concurrent.futures
 
 from collections import deque
-from time import time
 from math import inf
 from numpy import minimum, maximum
 import itertools
 
 moves = ["up", "left", "right", "down"]
-depth = 0
+depth = 3
 
-# Not used anymore
 BRANCH_LIMIT = 1800
 
 class Battlesnake:
@@ -22,6 +21,7 @@ class Battlesnake:
         self.our_snake = self.board.get_our_snake()
         self.seen = set()
         self.shortest_path = []
+        self.branch_count = 0
 
     ##############################
     # Implement this             #
@@ -34,15 +34,40 @@ class Battlesnake:
             return random.choice(last_ditch_moves) if last_ditch_moves else "up"
         
         self.branch_count = 0
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 18, m)]
-
-        if len(safest_moves) == 0:
-            return self.most_squares_move(safe_moves)
-        
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
         preferred_moves = safest_moves if safest_moves else safe_moves
+        
+        # Grow snake
+        if self.our_snake.health < 50:
+            print("Regenerating Health")
+            return self.best_direction_to_food(preferred_moves, self.board)
 
-        # Otherwise do random move
-        return random.choice(preferred_moves)
+        # If we aren't the largest snake by at least 2 points, we need to be
+        elif (len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
+            print("Growing!")
+            return self.best_direction_to_food(preferred_moves, self.board)
+
+        #############################
+        # Otherwise, return minimax #
+        #############################
+        move_scores = {m: 0 for m in preferred_moves}
+        
+        # Set up minimax threads
+        minimax = self.minimax
+
+        args = []
+        for move in preferred_moves:
+            board_copy = self.board.copy()
+            args.append([depth, -inf, inf, board_copy, True, move])
+            
+        with concurrent.futures.ThreadPoolExecutor(4) as executor:
+            futures = [executor.submit(minimax, *arg) for arg in args]
+
+            move_scores = {preferred_moves[i]: f.result() for i, f in enumerate(futures)}
+
+            print("Minimax")
+            print(move_scores)
+            return max(move_scores, key=move_scores.get)
 
 
     # See if the snake still has #<turns> worth of moves to go to
@@ -60,7 +85,6 @@ class Battlesnake:
         
     # Requires snake to have moved (safe move)
     def __is_stuck_in_dead_end_wrapped(self, snake, turns):
-        
         if turns == 0:
             return False
         
@@ -91,6 +115,15 @@ class Battlesnake:
             if collide:
                 continue
             
+            # Check collision with other snakes
+            for other_snake in self.board.get_other_snakes(self.our_snake.id):
+                for tile in other_snake.tiles[1:-2]: # Optimization: Don't look at tail
+                    if head == tile:
+                        collide = True
+                        break
+                if collide:
+                    continue
+                
             stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
 
         return stuck
@@ -101,7 +134,7 @@ class Battlesnake:
         score = 0
         board = original_board.copy()
         snake = board.get_snake(snakeId)
-        has_grown = board.move_snake(snakeId, move)
+        board.move_snake(snakeId, move)
         
         board.adjudicate_board()
         
@@ -111,63 +144,25 @@ class Battlesnake:
         if snake.has_killed:
             score += 150
         
-        if move == self.best_direction_to_food(moves, original_board):
-            if snake.health < 50:
-                score += 25
-                if has_grown:
-                    score += 35
-            
-            # We should be the largest snake
-            if len(board.get_other_snakes(self.our_snake.id)) >= 1 and len(snake.tiles) < 1 + max([len(s.tiles) for s in board.get_other_snakes(self.our_snake.id)]):
-                score += 25
-        
         # If we have access to alot of space, reward
         free_squares = self.get_free_squares(move, original_board)
-        # print(f'Move: {move} - free squares: {free_squares}')
         score += free_squares
 
-        # for other_snake in other_snakes:
-        #     other_snake_head = other_snake.tiles[0]
-        #     distance = abs(our_head[0] - other_snake_head[0]) + abs(our_head[1] - other_snake_head[1])
-
-        #     if distance <= 3:
-        #         # Penalize if we get too close to snakes
-        #         if (len(other_snake.tiles)) > len(snake.tiles):
-        #             score -= 5
-                
-        #         # If we are near another snake's head that is shorter, reward
-        #         else:
-        #             score += 15
-        
-        # # Stay away from corners
-        # if (our_head[0] in range(0, 2) or our_head[0] in range(board.width - 2, board.width)) and (our_head[1] in range(0, 2) or our_head[1] in range(board.height - 2, board.height)):
-        #     score -= 100
-        
-        # elif our_head[0] == 0 or our_head[0] == board.width - 1 or our_head[1] == 0 or our_head[1] == board.height:
-        #     score -= 10
-        # print(f"Score algorithm took: {end-start}") # Negligible
         return score
     
     def minimax(self, depth: int, alpha, beta, board: Board, isOurSnake: bool, move: str):
         other_snakes = board.get_other_snakes(board.get_our_snake().id)
         other_snake_moves = [self.__get_safe_moves(s, board, False) for s in other_snakes]
 
-        if depth == 0 or not board.get_our_snake().is_alive or len([s for s in other_snakes if s.is_alive]) == 0 or len(self.__get_safe_moves(board.get_our_snake(), board, checkHeadOnHead=False)) == 0:
+        if depth == 0 or not board.get_our_snake().is_alive or not (s for s in other_snakes if s.is_alive) or not self.__get_safe_moves(board.get_our_snake(), board, checkHeadOnHead=False):
             return self.__get_score(board.get_our_snake().id, board, move)
 
         # Take our other_snakes if other_snake_moves is empty
-        other_snakes_new = []
-        other_snake_moves_new = []
         for i in range(len(other_snakes)):
-            if len(other_snake_moves[i]) != 0:
-                other_snakes_new.append(other_snakes[i])
-                other_snake_moves_new.append(other_snake_moves[i])
-        
-        other_snakes = other_snakes_new
-        other_snake_moves = other_snake_moves_new
-        
-        other_snakes_new = []
-        other_snake_moves_new = []
+            if not other_snake_moves[i]:
+                other_snakes.pop(i)
+                other_snake_moves.pop(i)
+                i -= 1
         move_combos = list(itertools.product(*other_snake_moves))
 
         # Minimax - spawn child process for each possible child node
@@ -187,9 +182,9 @@ class Battlesnake:
             # We can move our snake now
             child_base_board.move_snake(child_base_board.get_our_snake().id, move)
             child_base_board.adjudicate_board()
-            
+
             if isOurSnake:
-                for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
+                for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board.copy(), True):
                     child_board = child_base_board.copy()
                     eval = self.minimax(depth - 1, alpha, beta, child_board, False, move)
                     value = maximum(value, eval)
@@ -198,7 +193,7 @@ class Battlesnake:
                         alphaBetaStop = True
                         break
             else:
-                for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
+                for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board.copy(), True):
                     child_board = child_base_board.copy()
                     eval = self.minimax(depth - 1, alpha, beta, child_board, True, move)
                     value = minimum(value, eval)
@@ -210,7 +205,7 @@ class Battlesnake:
                     
 
     def __get_safe_moves(self, snake, board, checkHeadOnHead=True):
-        safe_moves = (m for m in moves if self.__is_move_safe(snake, m, board.copy(), checkHeadOnHead))
+        safe_moves = (m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead))
         return safe_moves
     
     

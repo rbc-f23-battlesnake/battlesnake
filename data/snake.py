@@ -66,3 +66,8 @@ class Snake:
             self.tiles.pop()
         
         return grown, food
+
+
+    def kill_this_snake(self):
+        self.tiles.clear()
+        self.is_alive = False  
