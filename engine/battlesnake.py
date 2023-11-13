@@ -11,9 +11,8 @@ from numpy import minimum, maximum
 import itertools
 
 moves = ["up", "left", "right", "down"]
-depth = 1
+depth = 3
 
-# Not used anymore
 BRANCH_LIMIT = 1800
 
 class Battlesnake:
@@ -22,6 +21,7 @@ class Battlesnake:
         self.our_snake = self.board.get_our_snake()
         self.seen = set()
         self.shortest_path = []
+        self.branch_count = 0
 
     ##############################
     # Implement this             #
