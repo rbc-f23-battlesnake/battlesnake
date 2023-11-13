@@ -38,7 +38,7 @@ class Battlesnake:
         preferred_moves = safest_moves if safest_moves else safe_moves
         
         # Grow snake
-        if self.our_snake.health < 50: 
+        if self.our_snake.health < 50:
             print("Regenerating Health")
             return self.best_direction_to_food(preferred_moves, self.board)
 
@@ -115,6 +115,15 @@ class Battlesnake:
             if collide:
                 continue
             
+            # Check collision with other snakes
+            for other_snake in self.board.get_other_snakes(self.our_snake.id):
+                for tile in other_snake.tiles[1:-2]: # Optimization: Don't look at tail
+                    if head == tile:
+                        collide = True
+                        break
+                if collide:
+                    continue
+                
             stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
 
         return stuck
