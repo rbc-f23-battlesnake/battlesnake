@@ -58,7 +58,7 @@ class Board:
     def move_snake(self, snake_id: str, direction: str) -> None:
         for snake in self.snakes:
             if snake.is_alive and snake.id == snake_id:
-                has_grown, self.food = snake.move(direction, self.food, editBoard=True)
+                has_grown = snake.move(direction, self.food, editBoard=True)[0]
                 return has_grown
 
 
@@ -71,16 +71,14 @@ class Board:
                 continue
             
             elif snake.health <= 0:
-                snake.tiles = None
-                snake.is_alive = False
+                snake.kill_this_snake()
                 continue
             
             head = snake.tiles[0]
             # Check if snake collides with itself
             for tile in snake.tiles[1:]:
                 if tile == head:
-                    snake.tiles = None
-                    snake.is_alive = False
+                    snake.kill_this_snake()
                     break
 
             if not snake.is_alive:
@@ -88,8 +86,7 @@ class Board:
             
             # Check boundaries
             if head[0] not in range(0, self.width) or head[1] not in range(0, self.height):
-                snake.tiles = None
-                snake.is_alive = False
+                snake.kill_this_snake()
                 continue          
 
             # Check collision with other snakes
@@ -102,30 +99,24 @@ class Board:
                     # If current snake longer, it wins
                     if len(snake.tiles) > len(other_snake.tiles):
                         snake.has_killed = True
-                        other_snake.tiles = None
-                        other_snake.is_alive = False
+                        other_snake.kill_this_snake()
                         continue
                     
                     # If both same length, both die
                     elif len(snake.tiles) == len(other_snake.tiles):
-                        snake.tiles = None
-                        snake.is_alive = False
-                        other_snake.tiles = None
-                        other_snake.is_alive = False
+                        snake.kill_this_snake()
+                        other_snake.kill_this_snake()
                         continue
                     
                     # Otherwise we lose
                     else:
                         other_snake.has_killed = True
-                        snake.tiles = None
-                        snake.is_alive = False
+                        snake.kill_this_snake()
                         continue
                     
                 # Check body collision
                 for tile in other_snake.tiles[1:]:
                     if tile == head:
                         other_snake.has_killed = True
-                        snake.tiles = None
-                        snake.is_alive = False
+                        snake.kill_this_snake()
                         break 
-                
