@@ -38,6 +38,18 @@ class Board:
         board.turn = self.turn
         return board
     
+    def get_food_count(self) -> int:
+        return len(self.food)
+    
+    def get_largest_enemy_snake(self) -> Snake:
+        enemy = None
+        largest = 0
+        for snake in self.get_other_snakes(self.get_our_snake().id):
+            if snake.is_alive and snake.get_length() > largest:
+                largest = snake.get_length()
+                enemy = snake
+   
+        return enemy
     
     def get_our_snake(self) -> Snake:
         for s in self.snakes:
