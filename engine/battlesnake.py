@@ -11,7 +11,7 @@ from numpy import minimum, maximum
 import itertools
 
 moves = ["up", "left", "right", "down"]
-depth = 3
+depth = 4
 
 BRANCH_LIMIT = 1800
 
@@ -69,6 +69,10 @@ class Battlesnake:
             print(move_scores)
             return max(move_scores, key=move_scores.get)
 
+    def get_preferred_moves(self, board, snake, deadEndDepth):
+        safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board)]
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, 15, m)]
+        return safest_moves if safest_moves else safe_moves
 
     # See if the snake still has #<turns> worth of moves to go to
     # DFS to find if a branch of length 
@@ -81,7 +85,6 @@ class Battlesnake:
         snake_moved.move(move, self.board.food)
             
         return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns)
-        
         
     # Requires snake to have moved (safe move)
     def __is_stuck_in_dead_end_wrapped(self, snake, turns):
@@ -142,8 +145,11 @@ class Battlesnake:
             return -inf
 
         if snake.has_killed:
-            return 255
+            score += 50
 
+        if len(board.snakes) == 1:
+            score += 75
+        
         # If we have access to alot of space, reward
         free_squares = self.get_free_squares(move, original_board)
         score += free_squares
@@ -157,60 +163,50 @@ class Battlesnake:
         if depth == 0 or not board.get_our_snake().is_alive or not (s for s in other_snakes if s.is_alive) or not self.__get_safe_moves(board.get_our_snake(), board, checkHeadOnHead=False):
             return self.__get_score(board.get_our_snake().id, board, move)
 
-        # Take our other_snakes if other_snake_moves is empty
-        for i in range(len(other_snakes)):
-            if not other_snake_moves[i]:
-                other_snakes.pop(i)
-                other_snake_moves.pop(i)
-                i -= 1
-        move_combos = list(itertools.product(*other_snake_moves))
-
-        # Minimax - spawn child process for each possible child node
-        value = -inf if isOurSnake else inf
-        
-        alphaStop = False
-        betaStop = False
         if isOurSnake:
-            for move_combo in move_combos:
-                if betaStop:
-                    break
-                child_base_board = board.copy()
+            value = -999999
+            child_base_board = board.copy()
             
-                # Move other snakes - our snake hasn't moved yet
-                for i in range(len(other_snakes)):
-                    child_base_board.move_snake(other_snakes[i].id, move_combo[i])
-                
-                # We can move our snake now
-                child_base_board.move_snake(self.our_snake.id, move)
-                child_base_board.adjudicate_board()
+            # We can move our snake now
+            child_base_board.move_snake(self.our_snake.id, move)
+            child_base_board.adjudicate_board()
 
-                for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board, True):
-                    child_board = child_base_board.copy()
-                    eval = self.minimax(depth - 1, alpha, beta, child_board, False, move)
-                    value = maximum(value, eval)
-                    alpha = maximum(alpha, eval)
-                    if value >= beta:
-                        betaStop = True
-                        break
+            for move in self.get_preferred_moves(child_base_board, child_base_board.get_our_snake(), deadEndDepth=12):
+                child_board = child_base_board.copy()
+                eval = self.minimax(depth - 1, alpha, beta, child_board, False, move)
+                value = maximum(value, eval)
+                alpha = maximum(alpha, value)
+                if value >= beta:
+                    break
             return value
+        
         else:
+            # Take our other_snakes if other_snake_moves is empty
+            for i in range(len(other_snakes)):
+                if not other_snake_moves[i]:
+                    other_snakes.pop(i)
+                    other_snake_moves.pop(i)
+                    i -= 1
+            move_combos = list(itertools.product(*other_snake_moves))
+
+            # Minimax - spawn child process for each possible child node        
+            alphaStop = False
+            value = 999999
             for move_combo in move_combos:
                 if alphaStop:
                     break
                 child_base_board = board.copy()
                 
-                # Move other snakes - our snake hasn't moved yet
+                # Move other snakes - our snake has already moved
                 for i in range(len(other_snakes)):
                     child_base_board.move_snake(other_snakes[i].id, move_combo[i])
                 
-                # We can move our snake now
-                child_base_board.move_snake(self.our_snake.id, move)
                 child_base_board.adjudicate_board()
                 for move in self.__get_safe_moves(child_base_board.get_our_snake(), child_base_board.copy(), True):
                     child_board = child_base_board.copy()
                     eval = self.minimax(depth - 1, alpha, beta, child_board, True, move)
                     value = minimum(value, eval)
-                    beta = minimum(beta, eval)
+                    beta = minimum(beta, value)
                     if value <= alpha:
                         alphaStop = True
                         break
@@ -285,7 +281,7 @@ class Battlesnake:
     # BFS to find shortest path
     def find_shortest_path_to_tiles(self, initialMoveList, desiredTilesList, board=None):
         if board == None:
-            board = self.board
+            board = self.board.copy()
         if len(desiredTilesList) == 0:
             # print("ERROR: No tiles in desiredTilesList")
             return [random.choice(initialMoveList)] 
