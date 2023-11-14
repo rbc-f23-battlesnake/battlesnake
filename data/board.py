@@ -1,5 +1,8 @@
 from data.snake import Snake
 
+def manhattan_dist(tileA, tileB):
+    return sum(abs(val1-val2) for val1, val2 in zip(tileA, tileB))
+    
 class Board:
     def __init__(self, *args):
         if len(args) == 0:
@@ -51,6 +54,15 @@ class Board:
    
         return enemy
     
+    def get_uncontested_food(self, snakeId):
+        uncontested_food = self.food.copy()
+        for snake in self.snakes:
+            if snake.id == snakeId:
+                continue
+            uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 2]
+
+        return uncontested_food
+ 
     def get_our_snake(self) -> Snake:
         for s in self.snakes:
             if s.is_our_snake:
@@ -61,7 +73,8 @@ class Board:
         for s in self.snakes:
             if s.id == snake_id:
                 return s
-    
+
+        
     def get_other_snakes(self, snake_id: str):
         return [s for s in self.snakes if s.is_alive and s.id != snake_id]
     
