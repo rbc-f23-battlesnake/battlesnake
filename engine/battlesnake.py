@@ -11,7 +11,7 @@ from numpy import minimum, maximum
 import itertools
 
 moves = ["up", "left", "right", "down"]
-depth = 4
+depth = 3
 
 BRANCH_LIMIT = 1800
 
