@@ -3,6 +3,7 @@ class Snake:
         if (len(args)) == 0:
             self.health = 0
             self.id = ""
+            self.name = ""
             self.is_our_snake = False
             self.is_alive = False
             self.has_killed = False
@@ -10,12 +11,21 @@ class Snake:
         else:
             self.health = args[0]['health']
             self.id = args[0]['id']
+            self.name = args[0]['name']
             self.is_our_snake = False if len(args) == 1 else args[1]
             self.is_alive = True
             self.has_killed = False
             # The head is always the first index in the body
             self.tiles = [(posn['x'], posn['y']) for posn in args[0]['body']]
 
+    def get_length(self):
+        return len(self.tiles)
+    
+    def get_head(self):
+        return self.tiles[0]
+    
+    def get_neck(self):
+        return self.tiles[1]
 
     def copy(self) -> 'Snake':
         snake = Snake()
