@@ -78,19 +78,19 @@ class Board:
     # Requires all snakes on the board have already made their move
     def adjudicate_board(self):
         for snake in self.snakes:
-            if not snake.is_alive:
+            if not snake.is_alive and not snake.tiles:
                 # print("Snake already dead")
                 continue
             
             elif snake.health <= 0:
-                snake.kill_this_snake()
+                snake.is_alive = False
                 continue
             
             head = snake.tiles[0]
             # Check if snake collides with itself
             for tile in snake.tiles[1:]:
                 if tile == head:
-                    snake.kill_this_snake()
+                    snake.is_alive = False
                     break
 
             if not snake.is_alive:
@@ -98,7 +98,7 @@ class Board:
             
             # Check boundaries
             if head[0] not in range(0, self.width) or head[1] not in range(0, self.height):
-                snake.kill_this_snake()
+                snake.is_alive = False
                 continue          
 
             # Check collision with other snakes
@@ -111,24 +111,27 @@ class Board:
                     # If current snake longer, it wins
                     if len(snake.tiles) > len(other_snake.tiles):
                         snake.has_killed = True
-                        other_snake.kill_this_snake()
+                        other_snake.is_alive = False
                         continue
                     
                     # If both same length, both die
                     elif len(snake.tiles) == len(other_snake.tiles):
-                        snake.kill_this_snake()
-                        other_snake.kill_this_snake()
+                        snake.is_alive = False
+                        other_snake.is_alive = False
                         continue
                     
                     # Otherwise we lose
                     else:
                         other_snake.has_killed = True
-                        snake.kill_this_snake()
+                        snake.is_alive = False
                         continue
                     
                 # Check body collision
                 for tile in other_snake.tiles[1:]:
                     if tile == head:
                         other_snake.has_killed = True
-                        snake.kill_this_snake()
+                        snake.is_alive = False
                         break 
+        for snake in self.snakes:
+            if not snake.is_alive and snake.tiles:
+                snake.kill_this_snake()
