@@ -12,7 +12,7 @@ import itertools
 import common.moves as utils
 
 moves = ["up", "left", "right", "down"]
-depth = 3
+depth = 6
 
 BRANCH_LIMIT = 1800
 
@@ -65,7 +65,7 @@ class Battlesnake:
                 "No enemy found -- opps"
                 return self.execute_minimax(preferred_moves)
             
-            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board, True)
+            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board, checkHeadOnHead=False)
             if not possible_enemy_moves:
                 return self.execute_minimax(preferred_moves)
             
@@ -73,8 +73,9 @@ class Battlesnake:
             best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=largest_enemy.id)
             
             target_tile = utils.simulate_move(best_enemy_move, largest_enemy.get_head())
-
-            move = self.find_shortest_path_to_tiles(preferred_moves, target_tile)[0]
+            print(f"Best Enemy move: {best_enemy_move} - targeting tile: {target_tile}")
+            
+            move = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])[0]
             return move
 
         #############################
@@ -102,8 +103,10 @@ class Battlesnake:
 
             move_scores = {preferred_moves[i]: f.result() for i, f in enumerate(futures)}
 
-            print("Minimax")
-            print(move_scores)
+            if snakeId == self.our_snake.id:
+                print("Minimax")
+                print(move_scores)
+                
             return max(move_scores, key=move_scores.get)
 
 
@@ -121,7 +124,7 @@ class Battlesnake:
             return False
         
         snake_moved = snake.copy()
-        snake_moved.move(move, [])
+        snake_moved.move(move, self.board.food)
             
         return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns)
         
@@ -141,7 +144,7 @@ class Battlesnake:
                 return False
             
             snake_copy = snake.copy()
-            snake_copy.move(move, [])
+            snake_copy.move(move, self.board.food)
             head = snake_copy.tiles[0]
             
             # Check boundaries
@@ -162,7 +165,10 @@ class Battlesnake:
                 if head in other_snake.tiles:
                     collide=True
                     break
-                
+            if collide:
+                continue
+            
+            # Not stuck up to <turns> deep into check
             stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
 
         return stuck

@@ -45,10 +45,11 @@ def end(game_state: typing.Dict):
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
+    print(f"[MOVE {game_state['turn']}]")
     
     battle_snake = Battlesnake(game_state)
     best_move = battle_snake.get_best_move()
-    print(f"MOVE {game_state['turn']}: " + best_move)
+    print(f"[Decided Move]: " + best_move)
     return {"move": best_move}
 
 # Start server when `python main.py` is run
