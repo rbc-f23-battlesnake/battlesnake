@@ -1,4 +1,5 @@
 from data.snake import Snake
+from math import inf
 
 def manhattan_dist(tileA, tileB):
     return sum(abs(val1-val2) for val1, val2 in zip(tileA, tileB))
@@ -53,7 +54,7 @@ class Board:
                 enemy = snake
    
         return enemy
-    
+
     def get_uncontested_food(self, snakeId):
         uncontested_food = self.food.copy()
         for snake in self.snakes:
@@ -145,6 +146,6 @@ class Board:
                         other_snake.has_killed = True
                         snake.is_alive = False
                         break 
-        for snake in self.snakes:
-            if not snake.is_alive and snake.tiles:
-                snake.kill_this_snake()
+            for snake in self.snakes:
+                if not snake.is_alive and snake.tiles:
+                    snake.kill_this_snake()
