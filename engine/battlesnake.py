@@ -359,13 +359,18 @@ class Battlesnake:
             print("ERROR: No tiles in desiredTilesList, returning None")
             return None     
 
-        our_snake = board.get_our_snake()
+        our_snake_copy = board.get_our_snake().copy()
+        
+        # Hotfix for in case food spawns in our path once we're committed
+        # e.g. https://play.battlesnake.com/game/d0e9b478-c8de-48e9-812a-506f7a7ffce5
+        our_snake_copy.tiles.append(tuple(our_snake_copy.tiles[-1]))
+        
         visited = set()
         
-        initial_head = our_snake.tiles[0]
+        initial_head = our_snake_copy.tiles[0]
         
         visited.add(initial_head)
-        to_visit = deque([(our_snake.copy(), [m]) for m in initialMoveList])
+        to_visit = deque([(our_snake_copy, [m]) for m in initialMoveList])
     
         while to_visit:
             snake_copy, path = to_visit.popleft()
