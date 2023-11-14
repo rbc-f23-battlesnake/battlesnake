@@ -49,51 +49,63 @@ class Battlesnake:
         # Grow snake
         if self.board.get_food_count() > 0 and self.our_snake.health < 50:
             print("Regenerating Health")
-            return self.best_direction_to_food(preferred_moves, self.our_snake.id)
+            best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
+            if best_dir:
+                return best_dir
+            else:
+                print("Can't find path to food, defaulting to minimax")
 
         # If we aren't the largest snake by at least 2 points, we need to be
         elif (self.board.get_food_count() > 0 and len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
             print("Growing!")
-            return self.best_direction_to_food(preferred_moves, self.our_snake.id)
+            best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
+            if best_dir:
+                return best_dir
+            else:
+                print("Can't find path to food, defaulting to minimax")
         
-        # If we are the largest by at least 2 points, find and kill the 2nd largest enemy snake
-        elif len(self.board.snakes) > 1 and len(self.our_snake.tiles) > max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)]):
+        # If we are the largest snake, or can't find food, attack closest snake that is smaller than us
+        elif len(self.board.snakes) > 1:
             print("Attacking!")
 
-            largest_enemy = self.board.get_largest_enemy_snake()
-            if not largest_enemy:
+            # Try closest enemy instead
+            # largest_enemy = self.board.get_largest_enemy_snake()
+            closest_enemy = self.get_closest_snake(preferred_moves)
+            if not closest_enemy:
                 "No enemy found -- opps"
-                return self.execute_minimax(preferred_moves)
+                return self.execute_minimax(preferred_moves, self.our_snake.id)
             
-            possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board, True)
+            possible_enemy_moves = self.__get_safe_moves(closest_enemy, self.board, checkHeadOnHead=False)
             if not possible_enemy_moves:
-                return self.execute_minimax(preferred_moves)
+                return self.execute_minimax(preferred_moves, self.our_snake.id)
             
             # find algorithm to get best tile for enemy snake while also no killing ourselves
-            best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=largest_enemy.id)
+            best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id)
             
-            target_tile = utils.simulate_move(best_enemy_move, largest_enemy.get_head())
-
-            move = self.find_shortest_path_to_tiles(preferred_moves, target_tile)[0]
-            return move
+            target_tile = utils.simulate_move(best_enemy_move, closest_enemy.get_head())
+            
+            print(f"Best Enemy move: {best_enemy_move} - targeting tile: {target_tile}")
+            
+            path = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
+            if path:
+                return path[0]
+            print("ERROR: Can't find path to expected tile, defaulting to minimax")
 
         #############################
         # Otherwise, return minimax #
         #############################
-        return self.execute_minimax(preferred_moves)
+        return self.execute_minimax(preferred_moves, self.our_snake.id)
 
 
-    def execute_minimax(self, preferred_moves, snakeId=None):
-        if not snakeId:
-            snakeId = self.our_snake.id
-        
+    def execute_minimax(self, preferred_moves, snakeId):
+
         # Set up minimax threads
         minimax = self.minimax
 
         args = []
         for move in preferred_moves:
             board_copy = self.board.copy()
-            board_copy.move_snake(self.our_snake.id, move)
+            board_copy.move_snake(snakeId, move)
             board_copy.adjudicate_board()
             args.append([depth, -inf, inf, board_copy, True, snakeId])
             
@@ -102,11 +114,15 @@ class Battlesnake:
 
             move_scores = {preferred_moves[i]: f.result() for i, f in enumerate(futures)}
 
-            print("Minimax")
-            print(move_scores)
+            if snakeId == self.our_snake.id:
+                print("Minimax")
+                print(move_scores)
+            else:
+                print(f"Possible enemy moves: {move_scores}")
+                
             return max(move_scores, key=move_scores.get)
 
-
+    
     def get_preferred_moves(self, board, snake, deadEndDepth):
         safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board)]
         safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, 15, m)]
@@ -121,7 +137,7 @@ class Battlesnake:
             return False
         
         snake_moved = snake.copy()
-        snake_moved.move(move, [])
+        snake_moved.move(move, self.board.food)
             
         return self.__is_stuck_in_dead_end_wrapped(snake_moved, turns)
         
@@ -141,7 +157,7 @@ class Battlesnake:
                 return False
             
             snake_copy = snake.copy()
-            snake_copy.move(move, [])
+            snake_copy.move(move, self.board.food)
             head = snake_copy.tiles[0]
             
             # Check boundaries
@@ -162,7 +178,10 @@ class Battlesnake:
                 if head in other_snake.tiles:
                     collide=True
                     break
-                
+            if collide:
+                continue
+            
+            # Not stuck up to <turns> deep into check
             stuck = stuck and self.__is_stuck_in_dead_end_wrapped(snake_copy, turns - 1)
 
         return stuck
@@ -175,7 +194,7 @@ class Battlesnake:
         original_board.adjudicate_board()
         snake = original_board.get_snake(snakeId)
         if not snake.is_alive:
-            return -inf
+            score -= 255
 
         if snake.has_killed:
             score += 50
@@ -191,9 +210,8 @@ class Battlesnake:
     
     def minimax(self, depth: int, alpha, beta, board: Board, isMaximizingSnake: bool, snakeId: str):
         other_snakes = board.get_other_snakes(snakeId)
-        other_snake_moves = [self.__get_safe_moves(s, board, False) for s in other_snakes]
 
-        if depth == 0 or not board.get_snake(snakeId).is_alive or not (s for s in other_snakes if s.is_alive) or not self.__get_safe_moves(board.get_snake(snakeId), board, checkHeadOnHead=False):
+        if depth == 0 or not board.get_snake(snakeId).is_alive or not other_snakes or not self.__get_safe_moves(board.get_snake(snakeId), board, checkHeadOnHead=False):
             return self.__get_score(snakeId, board)
 
         if isMaximizingSnake:
@@ -201,6 +219,8 @@ class Battlesnake:
 
             for nextMove in self.get_preferred_moves(board, board.get_snake(snakeId), deadEndDepth=12):
                 child_board = board.copy()
+                
+                # Move "our" snake
                 child_board.move_snake(snakeId, nextMove)
                 child_board.adjudicate_board()
                 
@@ -212,12 +232,7 @@ class Battlesnake:
             return value
         
         else:
-            # Take our other_snakes if other_snake_moves is empty
-            for i in range(len(other_snakes)):
-                if not other_snake_moves[i]:
-                    other_snakes.pop(i)
-                    other_snake_moves.pop(i)
-                    i -= 1
+            other_snake_moves = [moves for _ in other_snakes]
             move_combos = list(itertools.product(*other_snake_moves))
 
             # Minimax - spawn child process for each possible child node        
@@ -225,7 +240,7 @@ class Battlesnake:
             for move_combo in move_combos:
                 child_base_board = board.copy()
                 
-                # Move other snakes - our snake has already moved
+                # Move other snakes - "our" snake has already moved
                 for i in range(len(other_snakes)):
                     child_base_board.move_snake(other_snakes[i].id, move_combo[i])
                 
@@ -286,16 +301,38 @@ class Battlesnake:
         
         return len(self.seen)
 
+    # Gets the closest snake that is smaller than us
+    def get_closest_snake(self, preferredMoves):
+        # Filter to be only snakes that are smaller than us
+        other_snakes = [s for s in self.board.get_other_snakes(self.our_snake.id) if len(s.tiles) < len(self.our_snake.tiles)]
+        
+        closest_path = self.find_shortest_path_to_tiles(preferredMoves, [s.tiles[0] for s in other_snakes])
+        
+        if not closest_path:
+            print("Can't find path to other snakes, will default to minimax")
+            return None
+        
+        head = self.our_snake.tiles[0]
+        for move in closest_path:
+            head = utils.simulate_move(move, head)
+        
+        for i in range(len(other_snakes)):
+            if head == other_snakes[i].tiles[0]:
+                return other_snakes[i]
+            
+        print("Can't connect path with enemy head, which shouldn't happen :(")
+        return None
+    
     def get_safe_food(self, foodList: list):
         # only go for food that has 2 or more open spaces
         safe_food = list(filter(lambda x: len(utils.get_possible_moves(x, self.board)) >= 2, foodList))
         return safe_food
-
+    
     # Find shortest path to food
     def best_direction_to_food(self, moveChoices, snakeId):
         uncontested_food = self.board.get_uncontested_food(snakeId)
         path = self.find_shortest_path_to_tiles(moveChoices, uncontested_food)
-        return path[0]
+        return path[0] if path else None
     
     # check all directions, and add possible moves to self.seen
     def floodfill(self, x, y, snake_board):
@@ -319,16 +356,21 @@ class Battlesnake:
         if board == None:
             board = self.board.copy()
         if len(desiredTilesList) == 0:
-            print("ERROR: No tiles in desiredTilesList, default Minimax")
-            return [self.execute_minimax(initialMoveList)]     
+            print("ERROR: No tiles in desiredTilesList, returning None")
+            return None     
 
-        our_snake = board.get_our_snake()
+        our_snake_copy = board.get_our_snake().copy()
+        
+        # Hotfix for in case food spawns in our path once we're committed
+        # e.g. https://play.battlesnake.com/game/d0e9b478-c8de-48e9-812a-506f7a7ffce5
+        our_snake_copy.tiles.append(tuple(our_snake_copy.tiles[-1]))
+        
         visited = set()
         
-        initial_head = our_snake.tiles[0]
+        initial_head = our_snake_copy.tiles[0]
         
         visited.add(initial_head)
-        to_visit = deque([(our_snake.copy(), [m]) for m in initialMoveList])
+        to_visit = deque([(our_snake_copy, [m]) for m in initialMoveList])
     
         while to_visit:
             snake_copy, path = to_visit.popleft()
@@ -359,8 +401,8 @@ class Battlesnake:
                 to_visit.append((snake_copy.copy(), path + [m]))
 
         # Search failed
-        print("Error can't find path to tile in desiredTilesList, default Minimax")
-        return [self.execute_minimax(initialMoveList)]     
+        print("Error can't find path to tile in desiredTilesList, returning None")
+        return None
 
     def __is_move_safe(self, snake: Snake, move: str, board, checkHeadOnHead=True) -> bool:
         if not snake.is_alive:
