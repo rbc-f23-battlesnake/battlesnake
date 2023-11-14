@@ -68,6 +68,8 @@ class Battlesnake:
         elif len(self.board.snakes) > 1:
             print("Attacking!")
 
+            # Try closest enemy instead
+            # largest_enemy = self.board.get_largest_enemy_snake()
             closest_enemy = self.get_closest_snake(preferred_moves)
             if not closest_enemy:
                 "No enemy found -- opps"
