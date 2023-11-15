@@ -32,7 +32,7 @@ class Snake:
         snake.health = self.health
         snake.id = self.id
         snake.is_our_snake = self.is_our_snake
-        snake.tiles = self.tiles.copy()
+        snake.tiles = [tuple(t) for t in self.tiles]
         snake.is_alive = self.is_alive
         snake.has_killed = self.has_killed
         return snake
