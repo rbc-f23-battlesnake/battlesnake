@@ -221,8 +221,7 @@ class Battlesnake:
                 child_board = board.copy()
                 
                 # Move "our" snake
-                child_board.move_snake(snakeId, nextMove)
-                child_board.adjudicate_board()
+                child_board.move_snake(snakeId, nextMove, editBoard=False)
                 
                 eval = self.minimax(depth - 1, alpha, beta, child_board, False, snakeId)
                 value = maximum(value, eval)
@@ -242,9 +241,9 @@ class Battlesnake:
                 
                 # Move other snakes - "our" snake has already moved
                 for i in range(len(other_snakes)):
-                    child_base_board.move_snake(other_snakes[i].id, move_combo[i])
-                
+                    child_base_board.move_snake(other_snakes[i].id, move_combo[i], editBoard=False)
                 child_base_board.adjudicate_board()
+                
                 eval = self.minimax(depth - 1, alpha, beta, child_base_board, True, snakeId)
                 value = minimum(value, eval)
                 beta = minimum(beta, value)

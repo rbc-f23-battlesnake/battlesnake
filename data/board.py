@@ -81,10 +81,10 @@ class Board:
     
     
     # Preferred method of moving the snake
-    def move_snake(self, snake_id: str, direction: str) -> None:
+    def move_snake(self, snake_id: str, direction: str, editBoard=True) -> None:
         for snake in self.snakes:
             if snake.is_alive and snake.id == snake_id:
-                has_grown = snake.move(direction, self.food, editBoard=True)[0]
+                has_grown = snake.move(direction, self.food, editBoard=editBoard)[0]
                 return has_grown
 
 
@@ -146,6 +146,12 @@ class Board:
                         other_snake.has_killed = True
                         snake.is_alive = False
                         break 
-            for snake in self.snakes:
-                if not snake.is_alive and snake.tiles:
-                    snake.kill_this_snake()
+        
+        # Clean up food that has been eaten
+        for snake in self.snakes:
+            if snake.is_alive and snake.tiles[0] in self.food:
+                self.food.remove(snake.tiles[0])
+        
+        for snake in self.snakes:
+            if not snake.is_alive and snake.tiles:
+                snake.kill_this_snake()
