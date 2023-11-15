@@ -15,17 +15,14 @@ moves = ["up", "left", "right", "down"]
 
 BRANCH_LIMIT = 1800
 TIME_LIMIT = 0.300
-minimax_values = {}
 
 class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
         self.board = Board(game_data)
         self.our_snake = self.board.get_our_snake()
         self.seen = set()
-        self.shortest_path = []
         self.branch_count = 0
         self.start_time = time()
-        self.minimax_values = None
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -156,9 +153,9 @@ class Battlesnake:
         return max(minimax_result_dict, key=minimax_result_dict.get)
 
     
-    def get_preferred_moves(self, board, snake, deadEndDepth):
+    def get_preferred_moves(self, board, snake, deadEndDepth=15):
         safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board)]
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, 15, m)]
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, deadEndDepth, m)]
         return safest_moves if safest_moves else safe_moves
 
 
@@ -393,11 +390,13 @@ class Battlesnake:
     def find_shortest_path_to_tiles(self, initialMoveList, desiredTilesList, board=None):
         if board == None:
             board = self.board
+        
+        board_copy = board.copy()
         if len(desiredTilesList) == 0:
             print("ERROR: No tiles in desiredTilesList, returning None")
             return None     
 
-        our_snake_copy = board.get_our_snake().copy()
+        our_snake_copy = board_copy.get_our_snake()
         
         # Hotfix for in case food spawns in our path once we're committed
         # e.g. https://play.battlesnake.com/game/d0e9b478-c8de-48e9-812a-506f7a7ffce5
@@ -408,10 +407,11 @@ class Battlesnake:
         initial_head = tuple(our_snake_copy.tiles[0])
         
         visited.add(initial_head)
-        to_visit = deque([(our_snake_copy, [m]) for m in initialMoveList])
+        to_visit = deque([(board_copy.copy(), [m]) for m in initialMoveList])
     
         while to_visit:
-            snake_copy, path = to_visit.popleft()
+            board_copy, path = to_visit.popleft()
+            snake_copy = board_copy.get_our_snake()
             direction_mapping = {
                 'up': (0, 1),
                 'down': (0, -1),
@@ -430,13 +430,14 @@ class Battlesnake:
             if new_head in visited:
                 continue
             
-            snake_copy.move(path[-1], board.food)
+            board_copy.move_snake(snake_copy.id, path[-1])
+
             visited.add(new_head)
 
-            for m in self.__get_safe_moves(snake_copy, board):
+            for m in self.__get_safe_moves(snake_copy, board_copy):
                 new_path = path.copy()
                 new_path.append(m)
-                to_visit.append((snake_copy.copy(), new_path))
+                to_visit.append((board_copy.copy(), new_path))
 
         # Search failed
         print("Error can't find path to tile in desiredTilesList, returning None")
