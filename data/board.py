@@ -60,7 +60,7 @@ class Board:
         for snake in self.snakes:
             if snake.id == snakeId:
                 continue
-            uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 2]
+            uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 3]
 
         return uncontested_food
  
