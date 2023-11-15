@@ -335,6 +335,7 @@ class Battlesnake:
         return len(self.seen)
 
     # Gets the closest snake that is smaller than us
+    # TODO: This is buggy for some reason - look for "Can't connect path with enemy head, which shouldn't happen :("
     def get_closest_snake(self, preferredMoves):
         # Filter to be only snakes that are smaller than us
         other_snakes = [s for s in self.board.get_other_snakes(self.our_snake.id) if len(s.tiles) < len(self.our_snake.tiles)]
