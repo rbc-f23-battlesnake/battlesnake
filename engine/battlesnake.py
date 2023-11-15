@@ -1,7 +1,8 @@
 from data.board import Board
 from data.snake import Snake
 
-import random
+from time import time
+from multiprocessing import Process, Array
 import typing
 import concurrent.futures
 
@@ -12,9 +13,10 @@ import itertools
 import common.moves as utils
 
 moves = ["up", "left", "right", "down"]
-depth = 3
 
 BRANCH_LIMIT = 1800
+TIME_LIMIT = 0.35
+minimax_values = {}
 
 class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
@@ -23,6 +25,8 @@ class Battlesnake:
         self.seen = set()
         self.shortest_path = []
         self.branch_count = 0
+        self.start_time = time()
+        self.minimax_values = None
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -45,7 +49,7 @@ class Battlesnake:
         safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
         print(f"safest moves: {safest_moves}")
         preferred_moves = safest_moves if safest_moves else safe_moves
-        
+    
         # Grow snake
         if self.board.get_food_count() > 0 and self.our_snake.health < 50:
             print("Regenerating Health")
@@ -80,7 +84,7 @@ class Battlesnake:
                 return self.execute_minimax(preferred_moves, self.our_snake.id)
             
             # find algorithm to get best tile for enemy snake while also no killing ourselves
-            best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id)
+            best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id, timeLimit=0.075)
             
             target_tile = utils.simulate_move(best_enemy_move, closest_enemy.get_head())
             
@@ -95,32 +99,55 @@ class Battlesnake:
         # Otherwise, return minimax #
         #############################
         return self.execute_minimax(preferred_moves, self.our_snake.id)
+    
+    
+    def minimax_wrapper(self, depth: int, board: Board, snakeId: str, move: int, resultArray):
+        move_score = self.minimax(depth, -inf, inf, board, False, snakeId)
+        resultArray[move] = move_score
+        
+    def execute_minimax(self, preferred_moves, snakeId, timeLimit=TIME_LIMIT):
+        minimax_values = Array('i', len(preferred_moves))
+        
+        # Iterative deepening
+        minimax_wrapper = self.minimax_wrapper
+        last_complete_minimax_scores = None
+        depth = 0
+        while True:
+            elapsed_time = time() - self.start_time
 
-
-    def execute_minimax(self, preferred_moves, snakeId):
-
-        # Set up minimax threads
-        minimax = self.minimax
-
-        args = []
-        for move in preferred_moves:
-            board_copy = self.board.copy()
-            board_copy.move_snake(snakeId, move)
-            board_copy.adjudicate_board()
-            args.append([depth, -inf, inf, board_copy, True, snakeId])
+            if elapsed_time >= timeLimit:
+                break
             
-        with concurrent.futures.ThreadPoolExecutor(4) as executor:
-            futures = [executor.submit(minimax, *arg) for arg in args]
+            last_complete_minimax_scores = list(minimax_values)
+            current_processes = []
+            runtime = timeLimit - elapsed_time
+            for i, move in enumerate(preferred_moves):
+                board_copy = self.board.copy()
+                board_copy.move_snake(snakeId, move, editBoard=False)
 
-            move_scores = {preferred_moves[i]: f.result() for i, f in enumerate(futures)}
+                args = [depth, board_copy, snakeId, i, minimax_values]
+                p = Process(target=minimax_wrapper, args=args)
+                p.start()
+                current_processes.append(p)
 
-            if snakeId == self.our_snake.id:
-                print("Minimax")
-                print(move_scores)
-            else:
-                print(f"Possible enemy moves: {move_scores}")
-                
-            return max(move_scores, key=move_scores.get)
+            for p in current_processes:
+                p.join(runtime)
+            
+            for p in current_processes:
+                p.terminate()                
+            
+            depth += 1
+
+            
+        minimax_result_dict = {preferred_moves[i]: last_complete_minimax_scores[i] for i in range(len(preferred_moves))}
+        print(f"Got to minimax depth {depth}")
+        if snakeId == self.our_snake.id:
+            print("Minimax")
+            print(minimax_result_dict)
+        else:
+            print(f"Possible enemy moves: {minimax_result_dict}")
+            
+        return max(minimax_result_dict, key=minimax_result_dict.get)
 
     
     def get_preferred_moves(self, board, snake, deadEndDepth):
@@ -212,6 +239,7 @@ class Battlesnake:
         other_snakes = board.get_other_snakes(snakeId)
 
         if depth == 0 or not board.get_snake(snakeId).is_alive or not other_snakes or not self.__get_safe_moves(board.get_snake(snakeId), board, checkHeadOnHead=False):
+            board.adjudicate_board()
             return self.__get_score(snakeId, board)
 
         if isMaximizingSnake:
@@ -221,8 +249,7 @@ class Battlesnake:
                 child_board = board.copy()
                 
                 # Move "our" snake
-                child_board.move_snake(snakeId, nextMove)
-                child_board.adjudicate_board()
+                child_board.move_snake(snakeId, nextMove, editBoard=False)
                 
                 eval = self.minimax(depth - 1, alpha, beta, child_board, False, snakeId)
                 value = maximum(value, eval)
@@ -242,9 +269,9 @@ class Battlesnake:
                 
                 # Move other snakes - "our" snake has already moved
                 for i in range(len(other_snakes)):
-                    child_base_board.move_snake(other_snakes[i].id, move_combo[i])
-                
+                    child_base_board.move_snake(other_snakes[i].id, move_combo[i], editBoard=False)
                 child_base_board.adjudicate_board()
+                
                 eval = self.minimax(depth - 1, alpha, beta, child_base_board, True, snakeId)
                 value = minimum(value, eval)
                 beta = minimum(beta, value)
