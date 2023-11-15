@@ -50,10 +50,6 @@ class Battlesnake:
         print(f"safest moves: {safest_moves}")
         preferred_moves = safest_moves if safest_moves else safe_moves
     
-        # test
-        return self.execute_minimax(preferred_moves, self.our_snake.id)
-    
-    
         # Grow snake
         if self.board.get_food_count() > 0 and self.our_snake.health < 50:
             print("Regenerating Health")
