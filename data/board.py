@@ -59,7 +59,7 @@ class Board:
     def get_uncontested_food(self, snakeId):
         uncontested_food = self.food.copy()
         for snake in self.snakes:
-            if snake.id == snakeId or len(snake.tiles) < len(self.our_snake.tiles):
+            if snake.id == snakeId or len(snake.tiles) < len(self.get_our_snake().tiles):
                 continue
             uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 3]
 
