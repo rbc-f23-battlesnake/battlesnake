@@ -14,7 +14,6 @@ import common.moves as utils
 moves = ["up", "left", "right", "down"]
 
 BRANCH_LIMIT = 1800
-TIME_LIMIT = 0.250
 
 class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
@@ -23,6 +22,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
+        self.TIME_LIMIT = game_data["game"]["timeout"] * 0.75
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -108,10 +108,10 @@ class Battlesnake:
             max_move_score = minimax_move_scores[max_move]
             
             if minimax_move_scores[best_move] >= max_move_score * 0.975:
-                print(f"Returning Minimax Move of {best_move} since it is within 97.5% of best minimax move")
+                print(f"Returning self-defined strategy move of [ {best_move} ] since it is within 97.5% of best minimax move")
                 return best_move
             else:
-                print(f"!!! ERROR: Best move of {best_move} is much lower than minimax max move so defaulting to that: {max_move} !!!")
+                    print(f"!!! ERROR: Best move of [ {best_move} ] is not within 97.5% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
                 
         # Otherwise no best move or best move is bad so return minimax
         return max_move
@@ -121,7 +121,9 @@ class Battlesnake:
         move_score = self.minimax(depth, -inf, inf, board, False, snakeId)
         resultArray[move] = move_score
         
-    def execute_minimax(self, preferred_moves, snakeId, timeLimit=TIME_LIMIT):
+    def execute_minimax(self, preferred_moves, snakeId, timeLimit=None):
+        if not timeLimit:
+            timeLimit = self.TIME_LIMIT
         minimax_values = Array('i', len(preferred_moves))
         
         # Iterative deepening

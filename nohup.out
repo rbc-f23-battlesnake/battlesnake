@@ -1,0 +1,1532 @@
+35.203.243.152 - - [2023-11-17 17:03:51] "GET / HTTP/1.1" 200 259 0.000721
+35.203.243.152 - - [2023-11-17 17:04:49] "POST /start HTTP/1.1" 200 166 0.000539
+Starting Server on Port 8000
+INFO
+GAME START
+-------------------------------------
+[MOVE 0]
+safe moves: ['up', 'left', 'right', 'down']
+safest moves: ['up', 'left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:49] "POST /move HTTP/1.1" 200 173 0.265682
+Minimax Calculation took 0.2646641731262207 seconds
+Got to minimax depth 8
+Minimax
+{'up': 111, 'left': 112, 'right': 112, 'down': 112}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 1]
+safe moves: ['up', 'down']
+safest moves: ['up', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:50] "POST /move HTTP/1.1" 200 173 0.259818
+Minimax Calculation took 0.2576777935028076 seconds
+Got to minimax depth 10
+Minimax
+{'up': 113, 'down': 111}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 2]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:50] "POST /move HTTP/1.1" 200 174 0.292863
+Minimax Calculation took 0.29140734672546387 seconds
+Got to minimax depth 9
+Minimax
+{'right': 111, 'down': 111}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 3]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:50] "POST /move HTTP/1.1" 200 174 0.282954
+Minimax Calculation took 0.2810678482055664 seconds
+Got to minimax depth 9
+Minimax
+{'up': 112, 'right': 112, 'down': 112}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 4]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:51] "POST /move HTTP/1.1" 200 174 0.311846
+Minimax Calculation took 0.3098583221435547 seconds
+Got to minimax depth 9
+Minimax
+{'up': 112, 'right': 111, 'down': 111}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 5]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:04:51] "POST /move HTTP/1.1" 200 174 0.287847
+Minimax Calculation took 0.2829575538635254 seconds
+Got to minimax depth 9
+Minimax
+{'up': 112, 'right': 110, 'down': 112}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 6]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Attacking!
+Other snake heads: [(1, 7)]
+Our Head: (4, 8)
+Closest path: ['down', 'left', 'left', 'left']
+Minimax Calculation took 0.10882711410522461 seconds
+Got to minimax depth 7
+Possible enemy moves: {'left': 110, 'right': 109}
+Best Enemy move: left - targeting tile: (0, 7)
+35.203.243.152 - - [2023-11-17 17:04:52] "POST /move HTTP/1.1" 200 173 0.251539
+Minimax Calculation took 0.2500770092010498 seconds
+Got to minimax depth 7
+Minimax
+{'up': 110, 'right': 110, 'down': 110}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 7]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+No explicit strategy defined so returning with minimax
+35.203.243.152 - - [2023-11-17 17:04:52] "POST /move HTTP/1.1" 200 173 0.253941
+35.203.243.152 - - [2023-11-17 17:04:52] "POST /end HTTP/1.1" 200 166 0.000708
+35.203.243.152 - - [2023-11-17 17:08:49] "POST /start HTTP/1.1" 200 166 0.000521
+Minimax Calculation took 0.2525629997253418 seconds
+Got to minimax depth 27
+Minimax
+{'left': 190, 'right': 187, 'down': 189}
+[Decided Move]: left
+GAME OVER
+
+GAME START
+-------------------------------------
+[MOVE 0]
+safe moves: ['up', 'left', 'right', 'down']
+safest moves: ['up', 'left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:49] "POST /move HTTP/1.1" 200 174 0.294549
+Minimax Calculation took 0.2924027442932129 seconds
+Got to minimax depth 9
+Minimax
+{'up': 112, 'left': 112, 'right': 112, 'down': 112}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 1]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:49] "POST /move HTTP/1.1" 200 173 0.296629
+Minimax Calculation took 0.29466700553894043 seconds
+Got to minimax depth 9
+Minimax
+{'up': 111, 'right': 111, 'down': 111}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 2]
+safe moves: ['left', 'right']
+safest moves: ['left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:50] "POST /move HTTP/1.1" 200 174 0.281594
+Minimax Calculation took 0.28041982650756836 seconds
+Got to minimax depth 10
+Minimax
+{'left': 111, 'right': 110}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 3]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:50] "POST /move HTTP/1.1" 200 174 0.262163
+Minimax Calculation took 0.26038670539855957 seconds
+Got to minimax depth 10
+Minimax
+{'up': 0, 'right': 110}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 4]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:50] "POST /move HTTP/1.1" 200 174 0.265746
+Minimax Calculation took 0.26331233978271484 seconds
+Got to minimax depth 10
+Minimax
+{'up': 0, 'right': 111}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 5]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:51] "POST /move HTTP/1.1" 200 174 0.264456
+Minimax Calculation took 0.26259827613830566 seconds
+Got to minimax depth 10
+Minimax
+{'up': 0, 'right': 110}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 6]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:51] "POST /move HTTP/1.1" 200 174 0.270079
+Minimax Calculation took 0.268157958984375 seconds
+Got to minimax depth 9
+Minimax
+{'up': 0, 'right': 109}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 7]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:51] "POST /move HTTP/1.1" 200 171 0.285631
+Minimax Calculation took 0.2832775115966797 seconds
+Got to minimax depth 9
+Minimax
+{'up': 111, 'right': 111}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 8]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:52] "POST /move HTTP/1.1" 200 171 0.270273
+Minimax Calculation took 0.26841211318969727 seconds
+Got to minimax depth 8
+Minimax
+{'up': 110, 'left': 110, 'right': 110}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 9]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:08:52] "POST /move HTTP/1.1" 200 173 0.300944
+Minimax Calculation took 0.29916882514953613 seconds
+Got to minimax depth 8
+Minimax
+{'up': 108, 'left': 109, 'right': 108}
+[Decided Move]: left
+-------------------------------------
+[MOVE 10]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:08:52] "POST /move HTTP/1.1" 200 173 0.301113
+Minimax Calculation took 0.2989964485168457 seconds
+Got to minimax depth 8
+Minimax
+{'up': 107, 'left': 108, 'down': 108}
+[Decided Move]: left
+-------------------------------------
+[MOVE 11]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:08:53] "POST /move HTTP/1.1" 200 173 0.266544
+Minimax Calculation took 0.2649693489074707 seconds
+Got to minimax depth 8
+Minimax
+{'up': 108, 'left': 109, 'down': 109}
+[Decided Move]: left
+-------------------------------------
+[MOVE 12]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:53] "POST /move HTTP/1.1" 200 173 0.317154
+Minimax Calculation took 0.315401554107666 seconds
+Got to minimax depth 9
+Minimax
+{'up': 107, 'left': 108, 'down': 108}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 13]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:54] "POST /move HTTP/1.1" 200 173 0.279099
+Minimax Calculation took 0.277817964553833 seconds
+Got to minimax depth 8
+Minimax
+{'up': 108, 'left': 108, 'down': 108}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 14]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:54] "POST /move HTTP/1.1" 200 173 0.289590
+Minimax Calculation took 0.2875199317932129 seconds
+Got to minimax depth 9
+Minimax
+{'up': 107, 'left': 107, 'down': 108}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 15]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:54] "POST /move HTTP/1.1" 200 171 0.265653
+Minimax Calculation took 0.2644960880279541 seconds
+Got to minimax depth 9
+Minimax
+{'up': 106, 'left': 106, 'down': 106}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 16]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:55] "POST /move HTTP/1.1" 200 171 0.276213
+Minimax Calculation took 0.27397894859313965 seconds
+Got to minimax depth 9
+Minimax
+{'up': 107, 'left': 107, 'right': 107}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 17]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:55] "POST /move HTTP/1.1" 200 171 0.271259
+Minimax Calculation took 0.27016568183898926 seconds
+Got to minimax depth 9
+Minimax
+{'up': 107, 'left': 107, 'right': 107}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 18]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:55] "POST /move HTTP/1.1" 200 171 0.310173
+Minimax Calculation took 0.3085000514984131 seconds
+Got to minimax depth 9
+Minimax
+{'up': 106, 'left': 106, 'right': 107}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 19]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:56] "POST /move HTTP/1.1" 200 171 0.263065
+Minimax Calculation took 0.26109766960144043 seconds
+Got to minimax depth 9
+Minimax
+{'up': 105, 'left': 105, 'right': 106}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 20]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:56] "POST /move HTTP/1.1" 200 171 0.310840
+Minimax Calculation took 0.30903005599975586 seconds
+Got to minimax depth 9
+Minimax
+{'up': 106, 'left': 106, 'right': 106}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 21]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:56] "POST /move HTTP/1.1" 200 173 0.296274
+Minimax Calculation took 0.29390621185302734 seconds
+Got to minimax depth 9
+Minimax
+{'up': 106, 'left': 105, 'right': 106}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 22]
+safe moves: ['up', 'down']
+safest moves: ['up', 'down']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:08:57] "POST /move HTTP/1.1" 200 173 0.280235
+Minimax Calculation took 0.2772104740142822 seconds
+Got to minimax depth 9
+Minimax
+{'up': 104, 'down': 105}
+[Decided Move]: down
+-------------------------------------
+[MOVE 23]
+safe moves: ['down']
+safest moves: ['down']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:08:57] "POST /move HTTP/1.1" 200 173 0.257096
+Minimax Calculation took 0.25458264350891113 seconds
+Got to minimax depth 10
+Minimax
+{'down': 0}
+[Decided Move]: down
+-------------------------------------
+[MOVE 24]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:58] "POST /move HTTP/1.1" 200 174 0.252120
+Minimax Calculation took 0.25081968307495117 seconds
+Got to minimax depth 8
+Minimax
+{'right': 106, 'down': 105}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 25]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:58] "POST /move HTTP/1.1" 200 174 0.287719
+Minimax Calculation took 0.28556346893310547 seconds
+Got to minimax depth 8
+Minimax
+{'up': 105, 'right': 105, 'down': 105}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 26]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:58] "POST /move HTTP/1.1" 200 174 0.292859
+Minimax Calculation took 0.29081106185913086 seconds
+Got to minimax depth 8
+Minimax
+{'up': 105, 'right': 105, 'down': 105}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 27]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:59] "POST /move HTTP/1.1" 200 174 0.300536
+Minimax Calculation took 0.2978649139404297 seconds
+Got to minimax depth 8
+Minimax
+{'up': 105, 'right': 104, 'down': 105}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 28]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:59] "POST /move HTTP/1.1" 200 173 0.290118
+Minimax Calculation took 0.2876572608947754 seconds
+Got to minimax depth 8
+Minimax
+{'up': 104, 'right': 104, 'down': 104}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 29]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:08:59] "POST /move HTTP/1.1" 200 173 0.265455
+Minimax Calculation took 0.2632405757904053 seconds
+Got to minimax depth 8
+Minimax
+{'left': 103, 'right': 104, 'down': 102}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 30]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:00] "POST /move HTTP/1.1" 200 174 0.280295
+Minimax Calculation took 0.27726244926452637 seconds
+Got to minimax depth 8
+Minimax
+{'left': 102, 'right': 102, 'down': 102}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 31]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:00] "POST /move HTTP/1.1" 200 171 0.272896
+Minimax Calculation took 0.27082157135009766 seconds
+Got to minimax depth 7
+Minimax
+{'up': 103, 'right': 103, 'down': 103}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 32]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:00] "POST /move HTTP/1.1" 200 174 0.280110
+Minimax Calculation took 0.27726054191589355 seconds
+Got to minimax depth 8
+Minimax
+{'up': 103, 'right': 103}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 33]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:01] "POST /move HTTP/1.1" 200 174 0.272116
+Minimax Calculation took 0.26931262016296387 seconds
+Got to minimax depth 9
+Minimax
+{'up': 0, 'right': 102, 'down': 103}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 34]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:01] "POST /move HTTP/1.1" 200 174 0.280711
+Minimax Calculation took 0.27912020683288574 seconds
+Got to minimax depth 9
+Minimax
+{'up': 103, 'right': 103, 'down': 103}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 35]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:02] "POST /move HTTP/1.1" 200 174 0.278117
+Minimax Calculation took 0.2758781909942627 seconds
+Got to minimax depth 9
+Minimax
+{'up': 102, 'right': 102, 'down': 102}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 36]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:02] "POST /move HTTP/1.1" 200 171 0.256134
+Minimax Calculation took 0.2538871765136719 seconds
+Got to minimax depth 8
+Minimax
+{'up': 101, 'right': 101, 'down': 101}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 37]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:03] "POST /move HTTP/1.1" 200 173 0.271000
+Minimax Calculation took 0.2689554691314697 seconds
+Got to minimax depth 8
+Minimax
+{'up': 102, 'left': 102, 'right': 102}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 38]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:03] "POST /move HTTP/1.1" 200 173 0.265518
+Minimax Calculation took 0.26378893852233887 seconds
+Got to minimax depth 9
+Minimax
+{'up': 0, 'left': 97}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 39]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:04] "POST /move HTTP/1.1" 200 173 0.285823
+Minimax Calculation took 0.2835822105407715 seconds
+Got to minimax depth 8
+Minimax
+{'up': 98, 'left': 98}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 40]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:05] "POST /move HTTP/1.1" 200 173 0.305696
+Minimax Calculation took 0.3032712936401367 seconds
+Got to minimax depth 8
+Minimax
+{'up': 94, 'left': 95, 'down': 94}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 41]
+safe moves: ['up', 'down']
+safest moves: ['up', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:05] "POST /move HTTP/1.1" 200 173 0.266675
+Minimax Calculation took 0.26453518867492676 seconds
+Got to minimax depth 9
+Minimax
+{'up': 0, 'down': 87}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 42]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:06] "POST /move HTTP/1.1" 200 174 0.279175
+Minimax Calculation took 0.2768692970275879 seconds
+Got to minimax depth 8
+Minimax
+{'right': 88, 'down': 88}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 43]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:06] "POST /move HTTP/1.1" 200 174 0.255442
+Minimax Calculation took 0.25362229347229004 seconds
+Got to minimax depth 8
+Minimax
+{'right': 100, 'down': 101}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 44]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:07] "POST /move HTTP/1.1" 200 173 0.265463
+Minimax Calculation took 0.2634444236755371 seconds
+Got to minimax depth 9
+Minimax
+{'right': 0, 'down': 101}
+!!! ERROR: Best move of right is much lower than minimax max move so defaulting to that: down !!!
+[Decided Move]: down
+-------------------------------------
+[MOVE 45]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:08] "POST /move HTTP/1.1" 200 174 0.325717
+Minimax Calculation took 0.32360386848449707 seconds
+Got to minimax depth 8
+Minimax
+{'left': 100, 'right': 101, 'down': 100}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 46]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:09] "POST /move HTTP/1.1" 200 173 0.274104
+Minimax Calculation took 0.2728595733642578 seconds
+Got to minimax depth 8
+Minimax
+{'up': 99, 'right': 99, 'down': 98}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 47]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:09] "POST /move HTTP/1.1" 200 173 0.259280
+Minimax Calculation took 0.25811147689819336 seconds
+Got to minimax depth 9
+Minimax
+{'left': 96, 'right': 96, 'down': 97}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 48]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:10] "POST /move HTTP/1.1" 200 173 0.282992
+Minimax Calculation took 0.281848669052124 seconds
+Got to minimax depth 9
+Minimax
+{'left': 95, 'down': 95}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 49]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:10] "POST /move HTTP/1.1" 200 171 0.294295
+Minimax Calculation took 0.2929210662841797 seconds
+Got to minimax depth 9
+Minimax
+{'up': 95, 'left': 95, 'down': 95}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 50]
+safe moves: ['left']
+safest moves: ['left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:11] "POST /move HTTP/1.1" 200 173 0.255362
+Minimax Calculation took 0.25337719917297363 seconds
+Got to minimax depth 10
+Minimax
+{'left': 0}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 51]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:12] "POST /move HTTP/1.1" 200 171 0.259077
+Minimax Calculation took 0.2575547695159912 seconds
+Got to minimax depth 9
+Minimax
+{'up': 90, 'left': 90, 'down': 90}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 52]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:12] "POST /move HTTP/1.1" 200 171 0.304211
+Minimax Calculation took 0.302126407623291 seconds
+Got to minimax depth 9
+Minimax
+{'up': 88, 'left': 88, 'right': 88}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 53]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:13] "POST /move HTTP/1.1" 200 174 0.272868
+Minimax Calculation took 0.27147555351257324 seconds
+Got to minimax depth 8
+Minimax
+{'up': 86, 'left': 86, 'right': 86}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 54]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:14] "POST /move HTTP/1.1" 200 174 0.296458
+Minimax Calculation took 0.2944469451904297 seconds
+Got to minimax depth 8
+Minimax
+{'up': 85, 'right': 85, 'down': 85}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 55]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:14] "POST /move HTTP/1.1" 200 174 0.262232
+Minimax Calculation took 0.26035189628601074 seconds
+Got to minimax depth 9
+Minimax
+{'up': 86, 'right': 86, 'down': 85}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 56]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:15] "POST /move HTTP/1.1" 200 174 0.288954
+Minimax Calculation took 0.2869107723236084 seconds
+Got to minimax depth 10
+Minimax
+{'up': 98, 'right': 97, 'down': 97}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 57]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:15] "POST /move HTTP/1.1" 200 174 0.284535
+Minimax Calculation took 0.2826802730560303 seconds
+Got to minimax depth 10
+Minimax
+{'up': 98, 'right': 96, 'down': 97}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 58]
+safe moves: ['up', 'down']
+safest moves: ['up', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:16] "POST /move HTTP/1.1" 200 171 0.260485
+Minimax Calculation took 0.2586781978607178 seconds
+Got to minimax depth 10
+Minimax
+{'up': 95, 'down': 96}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 59]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:09:16] "POST /move HTTP/1.1" 200 171 0.255709
+Minimax Calculation took 0.25409913063049316 seconds
+Got to minimax depth 9
+Minimax
+{'up': 95, 'left': 95}
+[Decided Move]: up
+-------------------------------------
+[MOVE 60]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:09:17] "POST /move HTTP/1.1" 200 171 0.252028
+Minimax Calculation took 0.250795841217041 seconds
+Got to minimax depth 12
+Minimax
+{'up': 97, 'left': 96}
+[Decided Move]: up
+-------------------------------------
+[MOVE 61]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:09:17] "POST /move HTTP/1.1" 200 171 0.262981
+Minimax Calculation took 0.26082682609558105 seconds
+Got to minimax depth 12
+Minimax
+{'up': 96, 'left': 95}
+[Decided Move]: up
+-------------------------------------
+[MOVE 62]
+safe moves: ['left']
+safest moves: ['left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:18] "POST /move HTTP/1.1" 200 173 0.256967
+Minimax Calculation took 0.25485849380493164 seconds
+Got to minimax depth 12
+Minimax
+{'left': 0}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 63]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+ERROR: No tiles in desiredTilesList, returning None
+Can't find path to food, defaulting to minimax
+35.203.243.152 - - [2023-11-17 17:09:18] "POST /move HTTP/1.1" 200 173 0.276911
+Minimax Calculation took 0.274993896484375 seconds
+Got to minimax depth 10
+Minimax
+{'left': 94, 'down': 94}
+[Decided Move]: left
+-------------------------------------
+[MOVE 64]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:19] "POST /move HTTP/1.1" 200 173 0.268348
+Minimax Calculation took 0.2662825584411621 seconds
+Got to minimax depth 10
+Minimax
+{'left': 0, 'down': 92}
+!!! ERROR: Best move of left is much lower than minimax max move so defaulting to that: down !!!
+[Decided Move]: down
+-------------------------------------
+[MOVE 65]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:19] "POST /move HTTP/1.1" 200 174 0.281153
+Minimax Calculation took 0.27845120429992676 seconds
+Got to minimax depth 9
+Minimax
+{'left': 0, 'right': 88, 'down': 88}
+!!! ERROR: Best move of left is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 66]
+safe moves: ['down']
+safest moves: ['down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:19] "POST /move HTTP/1.1" 200 173 0.255653
+Minimax Calculation took 0.2531001567840576 seconds
+Got to minimax depth 10
+Minimax
+{'down': 0}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 67]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:20] "POST /move HTTP/1.1" 200 173 0.289714
+Minimax Calculation took 0.2869234085083008 seconds
+Got to minimax depth 8
+Minimax
+{'left': 94, 'down': 93}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 68]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:20] "POST /move HTTP/1.1" 200 173 0.277045
+Minimax Calculation took 0.274658203125 seconds
+Got to minimax depth 8
+Minimax
+{'left': 93, 'down': 92}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 69]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:21] "POST /move HTTP/1.1" 200 173 0.265238
+Minimax Calculation took 0.2623870372772217 seconds
+Got to minimax depth 8
+Minimax
+{'up': 85, 'left': 86, 'down': 86}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 70]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:21] "POST /move HTTP/1.1" 200 173 0.317861
+Minimax Calculation took 0.3145580291748047 seconds
+Got to minimax depth 7
+Minimax
+{'up': 82, 'left': 82, 'down': 81}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 71]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:22] "POST /move HTTP/1.1" 200 173 0.289903
+Minimax Calculation took 0.2884821891784668 seconds
+Got to minimax depth 7
+Minimax
+{'up': 82, 'left': 82, 'down': 82}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 72]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:22] "POST /move HTTP/1.1" 200 173 0.283370
+Minimax Calculation took 0.2814674377441406 seconds
+Got to minimax depth 8
+Minimax
+{'up': 86, 'left': 86, 'down': 86}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 73]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:23] "POST /move HTTP/1.1" 200 173 0.273950
+Minimax Calculation took 0.26998186111450195 seconds
+Got to minimax depth 9
+Minimax
+{'left': 94, 'right': 94, 'down': 94}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 74]
+safe moves: ['up', 'down']
+safest moves: ['up', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:23] "POST /move HTTP/1.1" 200 171 0.256913
+Minimax Calculation took 0.25451111793518066 seconds
+Got to minimax depth 9
+Minimax
+{'up': 94, 'down': 93}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 75]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:24] "POST /move HTTP/1.1" 200 171 0.291056
+Minimax Calculation took 0.2895820140838623 seconds
+Got to minimax depth 8
+Minimax
+{'up': 95, 'left': 95}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 76]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:24] "POST /move HTTP/1.1" 200 174 0.269560
+Minimax Calculation took 0.268329381942749 seconds
+Got to minimax depth 8
+Minimax
+{'up': 67, 'left': 94, 'right': 95}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 77]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:24] "POST /move HTTP/1.1" 200 174 0.268672
+Minimax Calculation took 0.26604723930358887 seconds
+Got to minimax depth 9
+Minimax
+{'up': 61, 'right': 85}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 78]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:25] "POST /move HTTP/1.1" 200 171 0.260541
+Minimax Calculation took 0.25902366638183594 seconds
+Got to minimax depth 8
+Minimax
+{'up': 64, 'right': 64}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 79]
+safe moves: ['left', 'right']
+safest moves: ['left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:25] "POST /move HTTP/1.1" 200 174 0.275925
+Minimax Calculation took 0.2735776901245117 seconds
+Got to minimax depth 10
+Minimax
+{'left': 6, 'right': 66}
+!!! ERROR: Best move of left is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 80]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:26] "POST /move HTTP/1.1" 200 173 0.279449
+Minimax Calculation took 0.2779550552368164 seconds
+Got to minimax depth 9
+Minimax
+{'right': 66, 'down': 66}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 81]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:26] "POST /move HTTP/1.1" 200 173 0.280835
+Minimax Calculation took 0.2785935401916504 seconds
+Got to minimax depth 9
+Minimax
+{'right': 88, 'down': 88}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 82]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:27] "POST /move HTTP/1.1" 200 173 0.284222
+Minimax Calculation took 0.28317904472351074 seconds
+Got to minimax depth 8
+Minimax
+{'left': 87, 'right': 87, 'down': 88}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 83]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:27] "POST /move HTTP/1.1" 200 173 0.276130
+Minimax Calculation took 0.2742273807525635 seconds
+Got to minimax depth 8
+Minimax
+{'left': 89, 'down': 89}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 84]
+safe moves: ['down']
+safest moves: ['down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:28] "POST /move HTTP/1.1" 200 173 0.254688
+Minimax Calculation took 0.25278687477111816 seconds
+Got to minimax depth 11
+Minimax
+{'down': 0}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 85]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:28] "POST /move HTTP/1.1" 200 173 0.267993
+Minimax Calculation took 0.26596879959106445 seconds
+Got to minimax depth 10
+Minimax
+{'left': 93, 'right': 91, 'down': 64}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 86]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:28] "POST /move HTTP/1.1" 200 171 0.286988
+Minimax Calculation took 0.28522372245788574 seconds
+Got to minimax depth 9
+Minimax
+{'up': 94, 'left': 93, 'down': 67}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 87]
+safe moves: ['up', 'left']
+safest moves: ['up', 'left']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:29] "POST /move HTTP/1.1" 200 171 0.257903
+Minimax Calculation took 0.2561531066894531 seconds
+Got to minimax depth 10
+Minimax
+{'up': 91, 'left': 91}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 88]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:29] "POST /move HTTP/1.1" 200 171 0.275127
+Minimax Calculation took 0.2734060287475586 seconds
+Got to minimax depth 9
+Minimax
+{'up': 93, 'left': 93, 'right': 94}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 89]
+safe moves: ['left', 'right']
+safest moves: ['left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:29] "POST /move HTTP/1.1" 200 173 0.277371
+Minimax Calculation took 0.27538132667541504 seconds
+Got to minimax depth 10
+Minimax
+{'left': 92, 'right': 3}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 90]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:30] "POST /move HTTP/1.1" 200 173 0.272274
+Minimax Calculation took 0.26998114585876465 seconds
+Got to minimax depth 9
+Minimax
+{'left': 93, 'down': 93}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 91]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:30] "POST /move HTTP/1.1" 200 173 0.275835
+Minimax Calculation took 0.27380943298339844 seconds
+Got to minimax depth 10
+Minimax
+{'left': 90, 'down': 91}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 92]
+safe moves: ['down']
+safest moves: ['down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:31] "POST /move HTTP/1.1" 200 173 0.252641
+Minimax Calculation took 0.25075697898864746 seconds
+Got to minimax depth 11
+Minimax
+{'down': 89}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 93]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:31] "POST /move HTTP/1.1" 200 174 0.268779
+Minimax Calculation took 0.2661457061767578 seconds
+Got to minimax depth 10
+Minimax
+{'right': 88, 'down': 88}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 94]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:31] "POST /move HTTP/1.1" 200 174 0.255356
+Minimax Calculation took 0.25405406951904297 seconds
+Got to minimax depth 9
+Minimax
+{'right': 87, 'down': 86}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 95]
+safe moves: ['down']
+safest moves: ['down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:32] "POST /move HTTP/1.1" 200 173 0.253364
+Minimax Calculation took 0.2516472339630127 seconds
+Got to minimax depth 10
+Minimax
+{'down': 0}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 96]
+safe moves: ['left', 'down']
+safest moves: ['left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:32] "POST /move HTTP/1.1" 200 173 0.286618
+Minimax Calculation took 0.28470683097839355 seconds
+Got to minimax depth 9
+Minimax
+{'left': 83, 'down': 83}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 97]
+safe moves: ['left', 'right', 'down']
+safest moves: ['left', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:32] "POST /move HTTP/1.1" 200 173 0.282115
+Minimax Calculation took 0.280137300491333 seconds
+Got to minimax depth 9
+Minimax
+{'left': 84, 'right': 83, 'down': 84}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 98]
+safe moves: ['up', 'left', 'down']
+safest moves: ['up', 'left', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:33] "POST /move HTTP/1.1" 200 173 0.258473
+Minimax Calculation took 0.25730180740356445 seconds
+Got to minimax depth 8
+Minimax
+{'up': 91, 'left': 89, 'down': 90}
+Returning Minimax Move of left since it is within 97.5% of best minimax move
+[Decided Move]: left
+-------------------------------------
+[MOVE 99]
+safe moves: ['up', 'down']
+safest moves: ['down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:33] "POST /move HTTP/1.1" 200 173 0.253978
+Minimax Calculation took 0.252246618270874 seconds
+Got to minimax depth 10
+Minimax
+{'down': 0}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 100]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:34] "POST /move HTTP/1.1" 200 173 0.259632
+Minimax Calculation took 0.257312536239624 seconds
+Got to minimax depth 10
+Minimax
+{'right': 56, 'down': 65}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 101]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:34] "POST /move HTTP/1.1" 200 173 0.270287
+Minimax Calculation took 0.26822352409362793 seconds
+Got to minimax depth 10
+Minimax
+{'right': 64, 'down': 69}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 102]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:34] "POST /move HTTP/1.1" 200 173 0.255704
+Minimax Calculation took 0.2537078857421875 seconds
+Got to minimax depth 9
+Minimax
+{'right': 84, 'down': 83}
+Returning Minimax Move of down since it is within 97.5% of best minimax move
+[Decided Move]: down
+-------------------------------------
+[MOVE 103]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:35] "POST /move HTTP/1.1" 200 173 0.270506
+Minimax Calculation took 0.2684440612792969 seconds
+Got to minimax depth 10
+Minimax
+{'right': 0, 'down': 87}
+!!! ERROR: Best move of right is much lower than minimax max move so defaulting to that: down !!!
+[Decided Move]: down
+-------------------------------------
+[MOVE 104]
+safe moves: ['right', 'down']
+safest moves: ['right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:35] "POST /move HTTP/1.1" 200 174 0.270388
+Minimax Calculation took 0.2677650451660156 seconds
+Got to minimax depth 11
+Minimax
+{'right': 79, 'down': 81}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 105]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:35] "POST /move HTTP/1.1" 200 171 0.286867
+Minimax Calculation took 0.2855565547943115 seconds
+Got to minimax depth 10
+Minimax
+{'up': 80, 'right': 80, 'down': -1}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 106]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:36] "POST /move HTTP/1.1" 200 171 0.272595
+Minimax Calculation took 0.2712521553039551 seconds
+Got to minimax depth 10
+Minimax
+{'up': 77, 'right': 77}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 107]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:36] "POST /move HTTP/1.1" 200 174 0.271143
+Minimax Calculation took 0.2691683769226074 seconds
+Got to minimax depth 11
+Minimax
+{'up': 76, 'right': 78}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: right !!!
+[Decided Move]: right
+-------------------------------------
+[MOVE 108]
+safe moves: ['up', 'right', 'down']
+safest moves: ['up', 'right', 'down']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:36] "POST /move HTTP/1.1" 200 173 0.261486
+Minimax Calculation took 0.2603600025177002 seconds
+Got to minimax depth 10
+Minimax
+{'up': 84, 'right': 86, 'down': 87}
+!!! ERROR: Best move of up is much lower than minimax max move so defaulting to that: down !!!
+[Decided Move]: down
+-------------------------------------
+[MOVE 109]
+safe moves: ['right', 'down']
+safest moves: ['right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:37] "POST /move HTTP/1.1" 200 174 0.256096
+Minimax Calculation took 0.2540583610534668 seconds
+Got to minimax depth 13
+Minimax
+{'right': 0}
+Returning Minimax Move of right since it is within 97.5% of best minimax move
+[Decided Move]: right
+-------------------------------------
+[MOVE 110]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:37] "POST /move HTTP/1.1" 200 171 0.268926
+Minimax Calculation took 0.2671082019805908 seconds
+Got to minimax depth 11
+Minimax
+{'up': 91, 'right': 90}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 111]
+safe moves: ['up', 'right']
+safest moves: ['up', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:38] "POST /move HTTP/1.1" 200 171 0.264105
+Minimax Calculation took 0.2617757320404053 seconds
+Got to minimax depth 10
+Minimax
+{'up': 90, 'right': 88}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 112]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:38] "POST /move HTTP/1.1" 200 171 0.267058
+Minimax Calculation took 0.2646465301513672 seconds
+Got to minimax depth 12
+Minimax
+{'up': 105, 'left': 106, 'right': 104}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 113]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:38] "POST /move HTTP/1.1" 200 171 0.261705
+Minimax Calculation took 0.2593653202056885 seconds
+Got to minimax depth 13
+Minimax
+{'up': 105, 'left': 105, 'right': 105}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 114]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:39] "POST /move HTTP/1.1" 200 171 0.253158
+Minimax Calculation took 0.2518184185028076 seconds
+Got to minimax depth 13
+Minimax
+{'up': 105, 'left': 105, 'right': 104}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 115]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:39] "POST /move HTTP/1.1" 200 171 0.262591
+Minimax Calculation took 0.2615058422088623 seconds
+Got to minimax depth 19
+Minimax
+{'up': 105, 'left': 103, 'right': 105}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 116]
+safe moves: ['up', 'left', 'right']
+safest moves: ['up', 'left', 'right']
+Growing!
+35.203.243.152 - - [2023-11-17 17:09:39] "POST /move HTTP/1.1" 200 171 0.253222
+Minimax Calculation took 0.2519505023956299 seconds
+Got to minimax depth 23
+Minimax
+{'up': 104, 'left': 105, 'right': 105}
+Returning Minimax Move of up since it is within 97.5% of best minimax move
+[Decided Move]: up
+-------------------------------------
+[MOVE 117]
+safe moves: ['left', 'right']
+safest moves: ['left', 'right']
+No explicit strategy defined so returning with minimax
+35.203.243.152 - - [2023-11-17 17:09:40] "POST /move HTTP/1.1" 200 174 0.259076
+35.203.243.152 - - [2023-11-17 17:09:40] "POST /end HTTP/1.1" 200 166 0.000539
