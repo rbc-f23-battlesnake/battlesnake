@@ -125,7 +125,7 @@ class Battlesnake:
     def execute_minimax(self, preferred_moves, snakeId, timeLimit=None):
         if not timeLimit:
             timeLimit = self.TIME_LIMIT
-        minimax_values = Array('f', len(preferred_moves))
+        minimax_values = Array('i', len(preferred_moves))
         
         # Iterative deepening
         minimax_wrapper = self.minimax_wrapper
@@ -140,7 +140,7 @@ class Battlesnake:
                 break
             
             last_complete_minimax_scores = list(minimax_values)
-            minimax_values = Array('f', len(preferred_moves))
+            minimax_values = Array('i', len(preferred_moves))
             
             current_processes = []
             runtime = (timeLimit - elapsed_time) * 0.8
@@ -248,13 +248,13 @@ class Battlesnake:
         original_board.adjudicate_board()
         snake = original_board.get_snake(snakeId)
         if not snake.is_alive:
-            score -= 255
+            score -= 500
 
         if snake.has_killed:
-            score += 50
+            score += 150
 
         if len(original_board.snakes) == 1:
-            score += 75
+            score += 175
         
         # If we have access to alot of space, reward
         free_squares = self.get_free_squares("noMove", original_board, snakeId)
