@@ -27,7 +27,7 @@ def info() -> typing.Dict:
         "author": "Globe Gliders", 
         "color": "#F3C2C3",
         "head": "bonhomme",
-        "tail": "flake"
+        "tail": "weight"
     }
 
 
