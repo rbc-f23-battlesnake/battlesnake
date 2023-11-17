@@ -108,11 +108,11 @@ class Battlesnake:
             # Return sanity-checked best-move
             max_move_score = minimax_move_scores[max_move]
             
-            if minimax_move_scores[best_move] >= max_move_score * 0.975:
-                print(f"Returning self-defined strategy move of [ {best_move} ] since it is within 97.5% of best minimax move")
+            if minimax_move_scores[best_move] >= max_move_score * 0.8:
+                print(f"Returning self-defined strategy move of [ {best_move} ] since it is within 80% of best minimax move")
                 return best_move
             else:
-                    print(f"!!! ERROR: Best move of [ {best_move} ] is not within 97.5% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
+                    print(f"!!! ERROR: Best move of [ {best_move} ] is not within 80% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
                 
         # Otherwise no best move or best move is bad so return minimax
         return max_move
@@ -330,7 +330,7 @@ class Battlesnake:
             board_copy = board.copy()
             board_copy.move_snake(snakeId, move)
         else:
-            board_copy = board
+            board_copy = board.copy()
         snake_copy = board_copy.get_snake(snakeId)
         
         # If this move results in instant death, don't do it
