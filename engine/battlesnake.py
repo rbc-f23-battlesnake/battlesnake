@@ -14,7 +14,7 @@ import common.moves as utils
 moves = ["up", "left", "right", "down"]
 
 BRANCH_LIMIT = 1800
-TIME_LIMIT = 0.300
+TIME_LIMIT = 0.250
 
 class Battlesnake:
     def __init__(self, game_data: typing.Dict) -> None:
@@ -107,8 +107,8 @@ class Battlesnake:
             # Return sanity-checked best-move
             max_move_score = minimax_move_scores[max_move]
             
-            if minimax_move_scores[best_move] >= max_move_score * 0.90:
-                print(f"Returning Minimax Move of {best_move} since it is within 90% of best minimax move")
+            if minimax_move_scores[best_move] >= max_move_score * 0.975:
+                print(f"Returning Minimax Move of {best_move} since it is within 97.5% of best minimax move")
                 return best_move
             else:
                 print(f"!!! ERROR: Best move of {best_move} is much lower than minimax max move so defaulting to that: {max_move} !!!")
