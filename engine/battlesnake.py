@@ -22,7 +22,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.75
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.55
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -155,6 +155,10 @@ class Battlesnake:
                 current_processes.append(p)
             
             for p in current_processes:
+                elapsed_time = time() - self.start_time
+                if elapsed_time >= timeLimit:
+                    print(f"Could not finish joining all threads for depth {depth}, terminating early")
+                    break
                 p.join(runtime)
             
             for p in current_processes:
