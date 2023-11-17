@@ -1,4 +1,4 @@
-from data.board import Board
+from data.board import Board, manhattan_dist
 from data.snake import Snake
 
 from time import time
@@ -30,11 +30,15 @@ class Battlesnake:
         open_spaces = utils.count_open_spaces()
         pass
 
+    def is_diagonal_tile(self, tileA, tileB):
+        return abs(tileA[0] - tileB[0]) == 1 and abs(tileA[1] - tileB[1]) == 1
+
     ##############################
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
-        safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board)]
+        # check head on = TRUE, as long as we are tied or the largest snake
+        safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
         print(f"safe moves: {safe_moves}")
         if (len(safe_moves) == 0):
             print("No very safe moves, defaulting to last_ditch_moves")
@@ -53,13 +57,34 @@ class Battlesnake:
         best_move = None # Queue up move for final minimax check
         
         # Grow snake
-        if self.board.get_food_count() > 0 and self.our_snake.health < 50:
+        if self.board.get_food_count() > 0 and self.our_snake.health < 30:
             print("Regenerating Health")
             best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
             if best_dir:
                 best_move = best_dir
             else:
                 print("Can't find path to food, defaulting to minimax")
+
+        # for dueling
+        elif (len(self.board.snakes) == 2 and self.board.turn > 15 and self.can_trap_enemy()):
+            print("It's time to dudududduel")
+            enemy_snake = self.board.get_other_snakes(self.our_snake.id)[0]
+
+            target_tile = enemy_snake.get_head()
+
+            # push to edge
+            move = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
+
+            if move:
+                best_move = move[0]
+
+            if enemy_snake.get_head()[0] in (0,10) and enemy_snake.get_head()[1] in (0,10) and self.our_snake.get_head()[0] in (1,9) and self.our_snake.get_head()[1] in (1,9):
+                if self.is_diagonal_tile(self.our_snake.get_head(), enemy_snake.get_head()):
+                    best_moves = self.__get_safe_moves(enemy_snake, self.board, checkHeadOnHead=True)
+                    if len(best_moves) == 1:
+                        print("you've activated my trap card")
+                        best_move = best_moves[0]
+            
 
         # If we aren't the largest snake by at least 2 points, we need to be
         elif (self.board.get_food_count() > 0 and len(self.board.snakes) > 1 and not len(self.our_snake.tiles) > 1 + max([len(s.tiles) for s in self.board.get_other_snakes(self.our_snake.id)])):
@@ -180,7 +205,14 @@ class Battlesnake:
         return minimax_result_dict
         # return max(minimax_result_dict, key=minimax_result_dict.get)
 
-    
+    def can_trap_enemy(self):
+        enemy_snake = self.board.get_other_snakes(self.our_snake.id)[0]
+
+        enemy_dist = manhattan_dist(enemy_snake.get_head(), (5,5))
+        our_dist = manhattan_dist(self.our_snake.get_head(), (5,5))
+
+        return our_dist <= enemy_dist and manhattan_dist(enemy_snake.get_head(), self.our_snake.get_head()) <= 3
+
     def get_preferred_moves(self, board, snake, deadEndDepth=15):
         safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board)]
         safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, deadEndDepth, m)]
@@ -259,7 +291,9 @@ class Battlesnake:
 
         if len(original_board.snakes) == 1:
             score += 175
-        
+
+        if snake.is_alive and (snake.get_head()[0] in (0,10) or snake.get_head()[1] in (0,10)):
+            score -= 10        
         # If we have access to alot of space, reward
         free_squares = self.get_free_squares("noMove", original_board, snakeId)
         score += free_squares

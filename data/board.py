@@ -54,6 +54,12 @@ class Board:
                 enemy = snake
    
         return enemy
+    
+    def can_do_head_on_head(self) -> bool:
+        if len(self.snakes) == 2:
+            return self.get_our_snake().get_length() >= self.get_largest_enemy_snake().get_length()
+        return False
+    
 
     # Only contested if larger snake is near 
     def get_uncontested_food(self, snakeId):
@@ -61,7 +67,7 @@ class Board:
         for snake in self.snakes:
             if snake.id == snakeId or len(snake.tiles) <= len(self.get_our_snake().tiles):
                 continue
-            uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 3]
+            uncontested_food = [f for f in uncontested_food if manhattan_dist(snake.tiles[0], f) > 0]
 
         return uncontested_food
  
