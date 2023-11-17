@@ -22,7 +22,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = game_data["game"]["timeout"] * 0.75
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.75
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -101,6 +101,7 @@ class Battlesnake:
         #############################################
         # Otherwise, return minimax or sanity check #
         #############################################
+
         minimax_move_scores = self.execute_minimax(preferred_moves, self.our_snake.id)
         max_move = max(minimax_move_scores, key=minimax_move_scores.get)
         if best_move:
@@ -117,14 +118,14 @@ class Battlesnake:
         return max_move
     
     
-    def minimax_wrapper(self, depth: int, board: Board, snakeId: str, move: int, resultArray):
+    def minimax_wrapper(self, depth: int, board: Board, snakeId: str, moveIdx: int, resultArray):
         move_score = self.minimax(depth, -inf, inf, board, False, snakeId)
-        resultArray[move] = move_score
+        resultArray[moveIdx] = move_score
         
     def execute_minimax(self, preferred_moves, snakeId, timeLimit=None):
         if not timeLimit:
             timeLimit = self.TIME_LIMIT
-        minimax_values = Array('i', len(preferred_moves))
+        minimax_values = Array('f', len(preferred_moves))
         
         # Iterative deepening
         minimax_wrapper = self.minimax_wrapper
@@ -139,7 +140,7 @@ class Battlesnake:
                 break
             
             last_complete_minimax_scores = list(minimax_values)
-            minimax_values = Array('i', len(preferred_moves))
+            minimax_values = Array('f', len(preferred_moves))
             
             current_processes = []
             runtime = (timeLimit - elapsed_time) * 0.8
