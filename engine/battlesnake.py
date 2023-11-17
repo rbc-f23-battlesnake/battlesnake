@@ -46,12 +46,18 @@ class Battlesnake:
         print(f"safest moves: {safest_moves}")
         preferred_moves = safest_moves if safest_moves else safe_moves
     
+    
+        #####################################
+        # Strategy Logic                    #
+        #####################################
+        best_move = None # Queue up move for final minimax check
+        
         # Grow snake
         if self.board.get_food_count() > 0 and self.our_snake.health < 50:
             print("Regenerating Health")
             best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
             if best_dir:
-                return best_dir
+                best_move = best_dir
             else:
                 print("Can't find path to food, defaulting to minimax")
 
@@ -60,7 +66,7 @@ class Battlesnake:
             print("Growing!")
             best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
             if best_dir:
-                return best_dir
+                best_move = best_dir
             else:
                 print("Can't find path to food, defaulting to minimax")
         
@@ -68,33 +74,47 @@ class Battlesnake:
         elif len(self.board.snakes) > 1:
             print("Attacking!")
 
-            # Try closest enemy instead
-            # largest_enemy = self.board.get_largest_enemy_snake()
+            # Target closest enemy
             closest_enemy = self.get_closest_snake(preferred_moves)
-            if not closest_enemy:
-                print("No enemy found -- opps")
-                return self.execute_minimax(preferred_moves, self.our_snake.id)
             
-            possible_enemy_moves = self.__get_safe_moves(closest_enemy, self.board, checkHeadOnHead=False)
-            if not possible_enemy_moves:
-                return self.execute_minimax(preferred_moves, self.our_snake.id)
+            if closest_enemy:
+                possible_enemy_moves = self.__get_safe_moves(closest_enemy, self.board, checkHeadOnHead=False)
+                if possible_enemy_moves:
+                    # find algorithm to get best tile for enemy snake while also no killing ourselves
+                    best_enemy_move_scores = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id, timeLimit=0.100)
+                    best_enemy_move = max(best_enemy_move_scores, key=best_enemy_move_scores.get)
+                    target_tile = utils.simulate_move(best_enemy_move, closest_enemy.get_head())
+                    
+                    print(f"Best Enemy move: {best_enemy_move} - targeting tile: {target_tile}")
+                    path = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
+                    if path:
+                        best_move = path[0]
+                    else:
+                        print("ERROR: Can't find path to expected tile, defaulting to minimax")
+                else:
+                    print("ERROR: Can't see enemy's best moves")
+            else:
+                print("ERROR: No closest enemy")
+        else:
+            print("No explicit strategy defined so returning with minimax")
             
-            # find algorithm to get best tile for enemy snake while also no killing ourselves
-            best_enemy_move = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id, timeLimit=0.100)
+        #############################################
+        # Otherwise, return minimax or sanity check #
+        #############################################
+        minimax_move_scores = self.execute_minimax(preferred_moves, self.our_snake.id)
+        max_move = max(minimax_move_scores, key=minimax_move_scores.get)
+        if best_move:
+            # Return sanity-checked best-move
+            max_move_score = minimax_move_scores[max_move]
             
-            target_tile = utils.simulate_move(best_enemy_move, closest_enemy.get_head())
-            
-            print(f"Best Enemy move: {best_enemy_move} - targeting tile: {target_tile}")
-            
-            path = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
-            if path:
-                return path[0]
-            print("ERROR: Can't find path to expected tile, defaulting to minimax")
-
-        #############################
-        # Otherwise, return minimax #
-        #############################
-        return self.execute_minimax(preferred_moves, self.our_snake.id)
+            if minimax_move_scores[best_move] >= max_move_score * 0.90:
+                print(f"Returning Minimax Move of {best_move} since it is within 90% of best minimax move")
+                return best_move
+            else:
+                print(f"!!! ERROR: Best move of {best_move} is much lower than minimax max move so defaulting to that: {max_move} !!!")
+                
+        # Otherwise no best move or best move is bad so return minimax
+        return max_move
     
     
     def minimax_wrapper(self, depth: int, board: Board, snakeId: str, move: int, resultArray):
@@ -149,8 +169,9 @@ class Battlesnake:
             print(minimax_result_dict)
         else:
             print(f"Possible enemy moves: {minimax_result_dict}")
-            
-        return max(minimax_result_dict, key=minimax_result_dict.get)
+        
+        return minimax_result_dict
+        # return max(minimax_result_dict, key=minimax_result_dict.get)
 
     
     def get_preferred_moves(self, board, snake, deadEndDepth=15):
