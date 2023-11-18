@@ -30,7 +30,10 @@ class Board:
                 else:
                     self.snakes.append(Snake(snake))
 
-
+    def hash_board(self):
+        return hash(self)
+    
+    
     def copy(self):
         # Fill values with the same data
         board = Board()

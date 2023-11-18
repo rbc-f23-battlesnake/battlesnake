@@ -22,7 +22,14 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.55
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000)
+        
+        if len(self.board.snakes) >= 4:
+            self.TIME_LIMIT *= 0.55
+        elif len(self.board.snakes) == 3:
+            self.TIME_LIMIT *= 0.65
+        else:
+            self.TIME_LIMIT *= 0.80
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -37,6 +44,7 @@ class Battlesnake:
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
+        
         # check head on = TRUE, as long as we are tied or the largest snake
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
         print(f"safe moves: {safe_moves}")
@@ -167,12 +175,14 @@ class Battlesnake:
             last_complete_minimax_scores = list(minimax_values)
             minimax_values = Array('i', len(preferred_moves))
             
+            # Sort for performance - look at best branch first
+            last_complete_minimax_scores, preferred_moves = zip(*sorted(zip(last_complete_minimax_scores, preferred_moves), reverse=True))
+            
             current_processes = []
             runtime = (timeLimit - elapsed_time) * 0.8
             for i, move in enumerate(preferred_moves):
                 board_copy = self.board.copy()
                 board_copy.move_snake(snakeId, move, editBoard=False)
-
                 args = [depth, board_copy, snakeId, i, minimax_values]
                 p = Process(target=minimax_wrapper, args=args)
                 p.start()
@@ -289,11 +299,14 @@ class Battlesnake:
         if snake.has_killed:
             score += 150
 
+        # win first
         if len(original_board.snakes) == 1:
             score += 175
+        
+        # tie for first
+        elif len(original_board.snakes) == 0:
+            score += 100
 
-        if snake.is_alive and (snake.get_head()[0] in (0,10) or snake.get_head()[1] in (0,10)):
-            score -= 10        
         # If we have access to alot of space, reward
         free_squares = self.get_free_squares("noMove", original_board, snakeId)
         score += free_squares
@@ -318,7 +331,7 @@ class Battlesnake:
                 
                 eval = self.minimax(depth - 1, alpha, beta, child_board, False, snakeId)
                 value = maximum(value, eval)
-                alpha = maximum(alpha, value)
+                alpha = maximum(alpha, eval)
                 if value >= beta:
                     break
             return value
@@ -339,7 +352,7 @@ class Battlesnake:
                 
                 eval = self.minimax(depth - 1, alpha, beta, child_base_board, True, snakeId)
                 value = minimum(value, eval)
-                beta = minimum(beta, value)
+                beta = minimum(beta, eval)
                 if value <= alpha:
                     break
             return value
