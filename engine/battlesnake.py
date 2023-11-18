@@ -293,7 +293,7 @@ class Battlesnake:
 
         original_board.adjudicate_board()
         snake = original_board.get_snake(snakeId)
-        if not snake.is_alive:
+        if not snake.is_alive and len(original_board.snakes) >= 2:
             score -= 500
 
         if snake.has_killed:
