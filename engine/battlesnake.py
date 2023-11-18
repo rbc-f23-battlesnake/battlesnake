@@ -310,7 +310,7 @@ class Battlesnake:
         # free_squares = self.get_free_squares("noMove", original_board, snakeId)
         controlled_squares = self.get_area_control(original_board, snakeId)
         # print(f'controlled squares: {controlled_squares}')
-        score += controlled_squares
+        score += controlled_squares * 10 if controlled_squares < 30 else controlled_squares
 
         return score
     
