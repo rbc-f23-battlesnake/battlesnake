@@ -25,11 +25,11 @@ class Battlesnake:
         self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000)
         
         if len(self.board.snakes) >= 4:
-            self.TIME_LIMIT *= 0.55
+            self.TIME_LIMIT *= 0.45
         elif len(self.board.snakes) == 3:
-            self.TIME_LIMIT *= 0.65
+            self.TIME_LIMIT *= 0.55
         else:
-            self.TIME_LIMIT *= 0.80
+            self.TIME_LIMIT *= 0.7
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -44,7 +44,6 @@ class Battlesnake:
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
-        
         # check head on = TRUE, as long as we are tied or the largest snake
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
         print(f"safe moves: {safe_moves}")
@@ -308,8 +307,10 @@ class Battlesnake:
             score += 100
 
         # If we have access to alot of space, reward
-        free_squares = self.get_free_squares("noMove", original_board, snakeId)
-        score += free_squares
+        # free_squares = self.get_free_squares("noMove", original_board, snakeId)
+        controlled_squares = self.get_area_control(original_board, snakeId)
+        # print(f'controlled squares: {controlled_squares}')
+        score += controlled_squares
 
         return score
     
@@ -374,7 +375,60 @@ class Battlesnake:
         # print(f"Best move is: {bestMove} with {bestSquares} of squares")
         return bestMove
     
+    def get_area_control(self, board, snakeId):
+        # set up board
+        # Each cell in the board has a value of tuple (depth, state) where state is:
+            # None: cell is empty
+            # snakeId: Cell is dominated by another snake
+        # depth measures precedence for flood-fill style algo
+        alive_snakes = [s for s in board.snakes if s.is_alive]
+        voronoi_board = [[(-1, None) for _ in range(board.width)] for _ in range(board.height)]
+        for snake in alive_snakes:
+            # Add snakes to board
+            for x, y in snake.tiles:
+                voronoi_board[y][x] = (-1, snake.id)
+        
+        # Fill board with voronoi
+        for snake in alive_snakes:
+            x, y = snake.get_head()
+            self.voronoi(x, y, 0, snake.id, voronoi_board)
+        
+        # Return number of cells that have snakeid
+        controlled_squares = 0
+        for row in voronoi_board:
+            for cell in row:
+                if cell[1] == snakeId:
+                    controlled_squares += 1
+        return controlled_squares
     
+    # Voronoi https://en.wikipedia.org/wiki/Voronoi_diagram
+    # mutates the voronoi_board
+    def voronoi(self, x, y, propDepth: int, snakeId: str, voronoi_board: list[list]) -> None:
+        # Propogate voronoi
+        for dx, dy in [(-1, 0), (0, -1), (0, 1), (1, 0)]:
+            # can't go OOB
+            if not ((0 <= x + dx < self.board.width) and (0 <= y + dy < self.board.width)):
+                continue
+            elif not voronoi_board[y + dy][x + dx][1]:
+                voronoi_board[y + dy][x + dx] = (propDepth, snakeId)
+                
+            elif voronoi_board[y + dy][x + dx][1] == snakeId:
+                continue
+            # can't go on other claimed cells if they are "younger" (less depth)
+            # If claimed cell is same age as current depth, just give it to the first visited snake (don't check)
+            else:
+                # If another snake visited, but we arrived earlier, claim the cell
+                if voronoi_board[y + dy][x + dx][0] < propDepth:
+                    continue
+                elif voronoi_board[y + dy][x + dx][0] > propDepth:
+                    voronoi_board[y + dy][x + dx] = (propDepth, snakeId)
+                elif voronoi_board[y + dy][x + dx][0] == propDepth and snakeId == self.our_snake.id:
+                    voronoi_board[y + dy][x + dx] = (propDepth, snakeId)
+                else:
+                    continue
+            self.voronoi(x + dx, y + dy, propDepth + 1, snakeId, voronoi_board)
+        
+
     def get_free_squares(self, move, board, snakeId):
         board_copy = None
         if move in moves:
@@ -452,8 +506,8 @@ class Battlesnake:
 
             # can't go OOB
             elif not ((0 <= x + dx < self.board.width) and (0 <= y + dy < self.board.width)):
-
                 continue
+            
             # Can't go on top of existing snakes
             elif snake_board[y + dy][x + dx]:
                 continue

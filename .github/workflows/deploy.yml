@@ -9,8 +9,8 @@ on:
             - "jerome"
             - "uma"
             - "timothy"
-            - "minimax"
             - "jerome-v2"
+            - "area-control"
 
 permissions:
     contents: read
