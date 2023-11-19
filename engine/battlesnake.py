@@ -13,6 +13,13 @@ import common.moves as utils
 
 moves = ["up", "left", "right", "down"]
 
+# For 11x11
+singleplayer_strategy = {(0, 0): 'up', (0, 1): 'right', (0, 2): 'up', (0, 3): 'right', (0, 4): 'up', (0, 5): 'right', (0, 6): 'up', (0, 7): 'right', (0, 8): 'up', (0, 9): 'right', (0, 10): 'right', (1, 0): 'left', (1, 1): 'right', (1, 2): 'left', (1, 3): 'right', (1, 4): 'left', (1, 5): 'right', (1, 6): 'left', (1, 7): 'right', (1, 8): 'left', (1, 9): 'up', (1, 10): 'right', (2, 0): 'left', (2, 1): 'right', (2, 2): 'left', (2, 3): 'right', (2, 4): 'left', (2, 5): 'right', (2, 6): 'left', (2, 7): 'right', (2, 8): 'left', (2, 9): 'down', (2, 10): 'right', (3, 0): 'left', (3, 1): 'right', (3, 2): 'left', (3, 3): 'right', (3, 4): 'left', (3, 5): 'right', (3, 6): 'left', (3, 7): 'right', (3, 8): 'up', (3, 9): 'left', (3, 10): 'right', (4, 0): 'left', (4, 1): 'right', (4, 2): 'left', (4, 3): 'right', (4, 4): 'left', (4, 5): 'right', (4, 6): 'left', (4, 7): 'right', (4, 8): 'left', (4, 9): 'down', (4, 10): 'right', (5, 0): 'left', (5, 1): 'right', (5, 2): 'left', (5, 3): 'right', (5, 4): 'left', (5, 5): 'right', (5, 6): 'left', (5, 7): 'right', (5, 8): 'up', (5, 9): 'left', (5, 10): 'right', (6, 0): 'left', (6, 1): 'right', (6, 2): 'left', (6, 3): 'right', (6, 4): 'left', (6, 5): 'right', (6, 6): 'left', (6, 7): 'right', (6, 8): 'left', (6, 9): 'down', (6, 10): 'right', (7, 0): 'left', (7, 1): 'right', (7, 2): 'left', (7, 3): 'right', (7, 4): 'left', (7, 5): 'right', (7, 6): 'left', (7, 7): 'right', (7, 8): 'up', (7, 9): 'left', (7, 10): 'right', (8, 0): 'left', (8, 1): 'right', (8, 2): 'left', (8, 3): 'right', (8, 4): 'left', (8, 5): 'right', (8, 6): 'left', (8, 7): 'right', (8, 8): 'left', (8, 9): 'down', (8, 10): 'right', (9, 0): 'left', (9, 1): 'up', (9, 2): 'left', (9, 3): 'up', (9, 4): 'left', (9, 5): 'up', (9, 6): 'left', (9, 7): 'up', (9, 8): 'up', (9, 9): 'left', (9, 10): 'right', (10, 0): 'left', (10, 1): 'down', (10, 2): 'down', (10, 3): 'down', (10, 4): 'down', (10, 5): 'down', (10, 6): 'down', (10, 7): 'down', (10, 8): 'down', (10, 9): 'down', (10, 10): 'down'}
+
+# For 9x9
+# singleplayer_strategy = {(1, 1): 'up', (1, 2): 'right', (1, 3): 'up', (1, 4): 'right', (1, 5): 'up', (1, 6): 'right', (1, 7): 'left', (1, 8): 'down', (1, 9): 'right', (2, 1): 'left', (2, 2): 'up', (2, 3): 'left', (2, 4): 'up', (2, 5): 'left', (2, 6): 'up', (2, 7): 'up', (2, 8): 'left', (2, 9): 'right', (3, 1): 'left', (3, 2): 'down', (3, 3): 'down', (3, 4): 'down', (3, 5): 'down', (3, 6): 'down', (3, 7): 'down', (3, 8): 'down', (3, 9): 'right', (4, 1): 'up', (4, 2): 'up', (4, 3): 'up', (4, 4): 'up', (4, 5): 'up', (4, 6): 'up', (4, 7): 'up', (4, 8): 'left', (4, 9): 'right', (5, 1): 'left', (5, 2): 'down', (5, 3): 'right', (5, 4): 'down', (5, 5): 'right', (5, 6): 'down', (5, 7): 'right', (5, 8): 'down', (5, 9): 'right', (6, 1): 'up', (6, 2): 'left', (6, 3): 'right', (6, 4): 'left', (6, 5): 'right', (6, 6): 'left', (6, 7): 'right', (6, 8): 'left', (6, 9): 'right', (7, 1): 'left', (7, 2): 'down', (7, 3): 'right', (7, 4): 'left', (7, 5): 'right', (7, 6): 'left', (7, 7): 'right', (7, 8): 'left', (7, 9): 'right', (8, 1): 'up', (8, 2): 'left', (8, 3): 'right', (8, 4): 'left', (8, 5): 'right', (8, 6): 'left', (8, 7): 'right', (8, 8): 'left', (8, 9): 'right', (9, 1): 'left', (9, 2): 'down', (9, 3): 'down', (9, 4): 'left', (9, 5): 'down', (9, 6): 'left', (9, 7): 'down', (9, 8): 'left', (9, 9): 'down'}
+
+
 BRANCH_LIMIT = 1800
 
 class Battlesnake:
@@ -44,6 +51,73 @@ class Battlesnake:
     # Implement this             #
     ##############################
     def get_best_move(self) -> str:
+        # I don't think it's possible to always win singleplayer because of health.
+        # But if we're lucky we can
+        
+        
+        if len(self.board.snakes) == 1:
+            # Strategy: Since we are on an m x n board where m, n are both odd
+            #           we create a hamiltonian circuit that only misses the top left corner (v)
+            
+            #            - if food spawns at v, path to from the circuit, then return to the closest tile in the circuit
+            if (0, 10) in self.board.food:
+                if self.our_snake.get_head() == (0, 9):
+                    return "up"
+                
+            return singleplayer_strategy[self.our_snake.get_head()]
+            # Whole board is almost full of food so we can just follow hamiltonian cycle for inside and win hopefully
+            safe_moves = self.__get_safe_moves(self.our_snake, self.board)
+            if self.our_snake.get_head() == (0, 9) and len(self.our_snake.tiles[-1]) == 84:
+                return "up"
+            if self.our_snake.get_head() == (9, 10):
+                return "right"
+            
+            if self.our_snake.get_head == (0, 10):
+                path_to_tail = self.find_shortest_path_to_tiles(safe_moves, [self.our_snake.tiles[-1]])
+                if path_to_tail:
+                    return path_to_tail[0]
+            
+            # If already in hamiltonian cycle
+            if self.our_snake.get_head() in singleplayer_strategy.keys():
+                move = singleplayer_strategy[self.our_snake.get_head()]
+                if move in safe_moves:
+                    return move
+    
+            # Enter Hamiltonian cycle
+            elif self.our_snake.get_head() == (0, 9):
+                return "right"
+            else:
+                edge_tiles = []
+            
+                for xy in range(11):
+                    for edge in [0, 10]:
+                        edge_tiles.append((xy, edge))
+                        edge_tiles.append((edge, xy))
+                    
+                dir = self.find_shortest_path_to_tiles(safe_moves, edge_tiles)
+                if dir:
+                    return dir[0]
+            
+            # elif self.our_snake.health <= 30:
+            #     dir = self.best_direction_to_food(safe_moves, self.our_snake.id)
+            #     if dir:
+            #         return self.best_direction_to_food(safe_moves, self.our_snake.id)
+            # else:
+            #     # Otherwise just wrap around the board
+            #     edge_tiles = []
+                
+            #     for xy in range(11):
+            #         for edge in [0, 10]:
+            #             edge_tiles.append((xy, edge))
+            #             edge_tiles.append((edge, xy))
+                    
+            #     dir = self.find_shortest_path_to_tiles(safe_moves, edge_tiles)
+            #     if dir:
+            #         return dir[0]
+
+            minimax_move_scores = self.execute_minimax(safe_moves, self.our_snake.id)
+            max_move = max(minimax_move_scores, key=minimax_move_scores.get)
+            return max_move
         
         # check head on = TRUE, as long as we are tied or the largest snake
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
@@ -176,7 +250,10 @@ class Battlesnake:
             minimax_values = Array('i', len(preferred_moves))
             
             # Sort for performance - look at best branch first
-            last_complete_minimax_scores, preferred_moves = map(list, zip(*sorted(zip(last_complete_minimax_scores, preferred_moves), reverse=True)))
+            try:
+                last_complete_minimax_scores, preferred_moves = map(list, zip(*sorted(zip(last_complete_minimax_scores, preferred_moves), reverse=True)))
+            except ValueError:
+                pass
             
             current_processes = []
             runtime = (timeLimit - elapsed_time) * 0.8
