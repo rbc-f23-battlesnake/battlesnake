@@ -58,66 +58,12 @@ class Battlesnake:
         if len(self.board.snakes) == 1:
             # Strategy: Since we are on an m x n board where m, n are both odd
             #           we create a hamiltonian circuit that only misses the top left corner (v)
-            
             #            - if food spawns at v, path to from the circuit, then return to the closest tile in the circuit
             if (0, 10) in self.board.food:
                 if self.our_snake.get_head() == (0, 9):
                     return "up"
                 
             return singleplayer_strategy[self.our_snake.get_head()]
-            # Whole board is almost full of food so we can just follow hamiltonian cycle for inside and win hopefully
-            safe_moves = self.__get_safe_moves(self.our_snake, self.board)
-            if self.our_snake.get_head() == (0, 9) and len(self.our_snake.tiles[-1]) == 84:
-                return "up"
-            if self.our_snake.get_head() == (9, 10):
-                return "right"
-            
-            if self.our_snake.get_head == (0, 10):
-                path_to_tail = self.find_shortest_path_to_tiles(safe_moves, [self.our_snake.tiles[-1]])
-                if path_to_tail:
-                    return path_to_tail[0]
-            
-            # If already in hamiltonian cycle
-            if self.our_snake.get_head() in singleplayer_strategy.keys():
-                move = singleplayer_strategy[self.our_snake.get_head()]
-                if move in safe_moves:
-                    return move
-    
-            # Enter Hamiltonian cycle
-            elif self.our_snake.get_head() == (0, 9):
-                return "right"
-            else:
-                edge_tiles = []
-            
-                for xy in range(11):
-                    for edge in [0, 10]:
-                        edge_tiles.append((xy, edge))
-                        edge_tiles.append((edge, xy))
-                    
-                dir = self.find_shortest_path_to_tiles(safe_moves, edge_tiles)
-                if dir:
-                    return dir[0]
-            
-            # elif self.our_snake.health <= 30:
-            #     dir = self.best_direction_to_food(safe_moves, self.our_snake.id)
-            #     if dir:
-            #         return self.best_direction_to_food(safe_moves, self.our_snake.id)
-            # else:
-            #     # Otherwise just wrap around the board
-            #     edge_tiles = []
-                
-            #     for xy in range(11):
-            #         for edge in [0, 10]:
-            #             edge_tiles.append((xy, edge))
-            #             edge_tiles.append((edge, xy))
-                    
-            #     dir = self.find_shortest_path_to_tiles(safe_moves, edge_tiles)
-            #     if dir:
-            #         return dir[0]
-
-            minimax_move_scores = self.execute_minimax(safe_moves, self.our_snake.id)
-            max_move = max(minimax_move_scores, key=minimax_move_scores.get)
-            return max_move
         
         # check head on = TRUE, as long as we are tied or the largest snake
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
