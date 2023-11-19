@@ -14,6 +14,7 @@ After=multi-user.target
 [Service]
 Type=simple
 Restart=always
+RestartSec=0
 ExecStart=/usr/bin/python3.11 /root/code/battlesnake/main.py >/dev/null 2>&1
 [Install]
 WantedBy=multi-user.target
