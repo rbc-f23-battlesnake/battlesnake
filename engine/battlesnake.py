@@ -2,7 +2,7 @@ from data.board import Board, manhattan_dist
 from data.snake import Snake
 
 from time import time
-from multiprocessing import Process, Array
+from multiprocessing import Process, Array, connection
 import typing
 
 from collections import deque
@@ -29,14 +29,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000)
-        
-        if len(self.board.snakes) >= 4:
-            self.TIME_LIMIT *= 0.55
-        elif len(self.board.snakes) == 3:
-            self.TIME_LIMIT *= 0.65
-        else:
-            self.TIME_LIMIT *= 0.80
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.8
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -182,9 +175,10 @@ class Battlesnake:
         
         # Iterative deepening
         minimax_wrapper = self.minimax_wrapper
-        last_complete_minimax_scores = None
         depth = 0
         
+        current_processes = []
+        background_processes = []
         while True:
             elapsed_time = time() - self.start_time
 
@@ -192,48 +186,30 @@ class Battlesnake:
                 print(f"Minimax Calculation took {elapsed_time} seconds")
                 break
             
-            last_complete_minimax_scores = list(minimax_values)
-            minimax_values = Array('i', len(preferred_moves))
-            
-            # Sort for performance - look at best branch first
-            try:
-                last_complete_minimax_scores, preferred_moves = map(list, zip(*sorted(zip(last_complete_minimax_scores, preferred_moves), reverse=True)))
-            except ValueError:
-                pass
-            
-            current_processes = []
-            runtime = (timeLimit - elapsed_time) * 0.8
+            runtime = (timeLimit - elapsed_time)
+
             for i, move in enumerate(preferred_moves):
                 board_copy = self.board.copy()
                 board_copy.move_snake(snakeId, move, editFood=False)
                 args = [depth, board_copy, snakeId, i, minimax_values]
                 p = Process(target=minimax_wrapper, args=args)
                 p.start()
-                
                 current_processes.append(p)
-            
-            for i, p in enumerate(current_processes):
-                elapsed_time = time() - self.start_time
-                if elapsed_time >= timeLimit:
-                    print(f"Could not finish joining all threads for depth {depth}, terminating early")
 
-                    # Update with most up-to-date completed searches
-                    for k, score in enumerate(list(minimax_values)[:i]):
-                        last_complete_minimax_scores[k] = score
-                    
-                    # Terminate
-                    break
-                p.join(runtime)
+            # Join all processes at the same time
+            connection.wait((p.sentinel for p in current_processes), timeout=runtime) 
             
-            for p in current_processes:
-                p.terminate()  
-            
+            background_processes += current_processes
             current_processes.clear()              
             
             depth += 1
-
+        
+        # cleanup
+        for p in background_processes:
+            p.terminate()
+                
         # Reformat results and return them
-        minimax_result_dict = {move: last_complete_minimax_scores[i] for i, move in enumerate(preferred_moves)}
+        minimax_result_dict = {move: list(minimax_values)[i] for i, move in enumerate(preferred_moves)}
         print(f"Got to minimax depth {depth}")
         if snakeId == self.our_snake.id:
             print("Minimax")
@@ -319,8 +295,6 @@ class Battlesnake:
     # For minimax
     def __get_score(self, snakeId: str, original_board: Board) -> float:
         score = 0
-
-        original_board.adjudicate_board()
         snake = original_board.get_snake(snakeId)
         alive_snakes = [s for s in original_board.snakes if s.is_alive]
         
@@ -330,7 +304,7 @@ class Battlesnake:
         if not snake.is_alive:
             # tie for first
             if not alive_snakes:
-                score += 100
+                score += 75
             else:
                 score -= 500
             return score
@@ -348,12 +322,10 @@ class Battlesnake:
         score += free_squares
         
         # Calculate the distance to the center of the board
-        center_x = original_board.width // 2
-        center_y = original_board.height // 2
-        distance_to_center = abs(snake.get_head()[0] - center_x) + abs(snake.get_head()[1] - center_y)
+        distance_to_center = abs(snake.get_head()[0] - 5) + abs(snake.get_head()[1] - 5)
 
         # Encourage controlling the center of the board
-        center_control_bonus = 15
+        center_control_bonus = 50
         score += center_control_bonus // (distance_to_center + 1)
 
         return score
@@ -450,7 +422,6 @@ class Battlesnake:
         
         self.seen = set()
         self.floodfill(snake_copy.tiles[0][0], snake_copy.tiles[0][1], snake_board)
-        
         return len(self.seen)
 
     # Gets the closest snake that is smaller than us
@@ -484,8 +455,7 @@ class Battlesnake:
     
     # Find shortest path to food
     def best_direction_to_food(self, moveChoices, snakeId):
-        uncontested_food = self.board.get_uncontested_food(snakeId)
-        path = self.find_shortest_path_to_tiles(moveChoices, uncontested_food)
+        path = self.find_shortest_path_to_tiles(moveChoices, self.board.food)
         return path[0] if path else None
     
     # check all directions, and add possible moves to self.seen
@@ -496,8 +466,8 @@ class Battlesnake:
 
             # can't go OOB
             elif not ((0 <= x + dx < self.board.width) and (0 <= y + dy < self.board.width)):
-
                 continue
+            
             # Can't go on top of existing snakes
             elif snake_board[y + dy][x + dx]:
                 continue
