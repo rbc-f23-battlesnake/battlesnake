@@ -29,7 +29,8 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) * 0.8
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) - 0.085 # 85ms of overhead
+        self.backup_move = None
 
     def check_available_moves(self, snake: Snake, move: str):
         new_postion = utils.simulate_move(move, snake.get_head())
@@ -40,6 +41,15 @@ class Battlesnake:
     def is_diagonal_tile(self, tileA, tileB):
         return abs(tileA[0] - tileB[0]) == 1 and abs(tileA[1] - tileB[1]) == 1
 
+    # !!! Emergencies only !!!
+    def get_backup_move(self) -> str:
+        print("!!! ERROR: Something went wrong, going with backup move if it exists, or picking random safe move")
+        if self.backup_move:
+            return self.backup_move
+        
+        last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
+        return self.most_squares_move(last_ditch_moves, self.our_snake.id) if last_ditch_moves else "up"
+        
     ##############################
     # Implement this             #
     ##############################
@@ -83,6 +93,7 @@ class Battlesnake:
             best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
             if best_dir:
                 best_move = best_dir
+                self.backup_move = best_dir
             else:
                 print("Can't find path to food, defaulting to minimax")
 
@@ -98,6 +109,7 @@ class Battlesnake:
 
             if move:
                 best_move = move[0]
+                self.backup_move = move[0]
 
             if enemy_snake.get_head()[0] in (0,10) and enemy_snake.get_head()[1] in (0,10) and self.our_snake.get_head()[0] in (1,9) and self.our_snake.get_head()[1] in (1,9):
                 if self.is_diagonal_tile(self.our_snake.get_head(), enemy_snake.get_head()):
@@ -105,6 +117,7 @@ class Battlesnake:
                     if len(best_moves) == 1:
                         print("you've activated my trap card")
                         best_move = best_moves[0]
+                        self.backup_move = best_moves[0]
             
 
         # If we aren't the largest snake by at least 2 points, we need to be
@@ -113,6 +126,7 @@ class Battlesnake:
             best_dir = self.best_direction_to_food(preferred_moves, self.our_snake.id)
             if best_dir:
                 best_move = best_dir
+                self.backup_move = best_dir
             else:
                 print("Can't find path to food, defaulting to minimax")
         
@@ -135,6 +149,7 @@ class Battlesnake:
                     path = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
                     if path:
                         best_move = path[0]
+                        self.backup_move = path[0]
                     else:
                         print("ERROR: Can't find path to expected tile, defaulting to minimax")
                 else:
@@ -161,6 +176,7 @@ class Battlesnake:
                     print(f"!!! ERROR: Best move of [ {best_move} ] is not within 80% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
                 
         # Otherwise no best move or best move is bad so return minimax
+        self.backup_move = max_move
         return max_move
     
     
@@ -228,7 +244,7 @@ class Battlesnake:
 
         return our_dist <= enemy_dist and manhattan_dist(enemy_snake.get_head(), self.our_snake.get_head()) <= 3
 
-    def get_preferred_moves(self, board, snake, deadEndDepth=15):
+    def get_preferred_moves(self, board, snake, deadEndDepth=12):
         safe_moves = [m for m in moves if self.__is_move_safe(snake, m, board)]
         safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(snake, deadEndDepth, m)]
         return safest_moves if safest_moves else safe_moves

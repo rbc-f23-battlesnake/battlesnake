@@ -49,7 +49,15 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"[MOVE {game_state['turn']} - {game_state['game']['id']}]")
     
     battle_snake = Battlesnake(game_state)
-    best_move = battle_snake.get_best_move()
+    best_move = None
+    try:
+        best_move = battle_snake.get_best_move()
+    except Exception as e:
+        print(e)
+        print("!!! ERROR: Something happened in normal best-move !!!")
+        best_move = battle_snake.backup_move()
+        
+        
     print(f"[Decided Move]: " + best_move)
     return {"move": best_move}
 
