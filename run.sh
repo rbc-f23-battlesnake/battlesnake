@@ -1,5 +1,3 @@
 #!/bin/bash
 
-
-rm nohup.out
-nohup python3.11 main.py &
+nohup python3.11 main.py >/dev/null 2>&1 &

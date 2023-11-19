@@ -39,7 +39,7 @@ class Snake:
             
     # when we move the snake we just delete the tail and add a new head in the direction we are going
     # return value is a tuple of (did we grow?, new food list)
-    def move(self, direction, food, editBoard=False):
+    def move(self, direction, food, editFood=False):
         
         self.health -= 1
 
@@ -63,7 +63,7 @@ class Snake:
                 self.health = 100
                 grown = True
                 # remove food from the board
-                if editBoard:
+                if editFood:
                     food = food.remove(food_dot)
                 break
         
