@@ -350,7 +350,11 @@ class Battlesnake:
         other_snakes = board.get_other_snakes(snakeId)
 
         if depth == 0 or not board.get_snake(snakeId).is_alive or not other_snakes or not self.__get_safe_moves(board.get_snake(snakeId), board, checkHeadOnHead=False):
-            board.adjudicate_board()
+            
+            # if isMaximizingSnake=True: Caller has moved all enemy snakes in response to us moving our snake
+            # if isMaximizingSnake=False: Caller has only moved our snake 
+            # So, we want to only do collision checks if all other enemy snakes have moved in response to us (isMaximizingSnake=True)
+            board.adjudicate_board(doCollisionChecks=isMaximizingSnake)
             return self.__get_score(snakeId, board)
 
         if isMaximizingSnake:
