@@ -23,6 +23,7 @@ WantedBy=multi-user.target
 Start service
 
 ```
+loginctl enable-linger
 sudo systemctl daemon-reload
 
 sudo systemctl enable battlesnake.service

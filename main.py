@@ -12,9 +12,9 @@
 # For more info see docs.battlesnake.com
 
 from engine.battlesnake import Battlesnake
-import typing
-import common.moves as m
+from server import run_server
 
+import typing
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -63,6 +63,4 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
 # Start server when `python main.py` is run
 if __name__ == "__main__":
-    from server import run_server
-
     run_server({"info": info, "start": start, "move": move, "end": end})

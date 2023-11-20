@@ -2,12 +2,12 @@ import typing
 
 from flask import Flask
 from flask import request
-from gevent.pywsgi import WSGIServer
-from gevent import monkey
+from waitress import serve
+
 import os
 
 def run_server(handlers: typing.Dict):
-    monkey.patch_all()
+
     app = Flask("Battlesnake")
 
     @app.get("/")
@@ -39,8 +39,7 @@ def run_server(handlers: typing.Dict):
         )
         return response
     port = int(os.environ["PORT"]) if "PORT" in os.environ else 8000
-    
-    http = WSGIServer(('0.0.0.0', port), app.wsgi_app) 
     print(f"Starting Server on Port {port}")
+    serve(app, port=port)
     
-    http.serve_forever()
+    
