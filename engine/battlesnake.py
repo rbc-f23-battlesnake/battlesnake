@@ -169,11 +169,11 @@ class Battlesnake:
             # Return sanity-checked best-move
             max_move_score = minimax_move_scores[max_move]
             
-            if minimax_move_scores[best_move] >= max_move_score * 0.8:
-                print(f"Returning self-defined strategy move of [ {best_move} ] since it is within 80% of best minimax move")
+            if minimax_move_scores[best_move] >= max_move_score * 0.93:
+                print(f"Returning self-defined strategy move of [ {best_move} ] since it is within 93% of best minimax move")
                 return best_move
             else:
-                    print(f"!!! ERROR: Best move of [ {best_move} ] is not within 80% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
+                    print(f"!!! ERROR: Best move of [ {best_move} ] is not within 93% of minimax max move so defaulting to minimax: [ {max_move} ] !!!")
                 
         # Otherwise no best move or best move is bad so return minimax
         self.backup_move = max_move
