@@ -29,7 +29,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) - 0.085 # 85ms of overhead
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) - 0.185 # 185ms of overhead
         self.backup_move = None
 
     def check_available_moves(self, snake: Snake, move: str):
@@ -163,7 +163,7 @@ class Battlesnake:
         # Otherwise, return minimax or sanity check #
         #############################################
 
-        minimax_move_scores = self.execute_minimax(preferred_moves, self.our_snake.id)
+        minimax_move_scores = self.execute_minimax(preferred_moves, self.our_snake.id, self.TIME_LIMIT)
         max_move = max(minimax_move_scores, key=minimax_move_scores.get)
         if best_move:
             # Return sanity-checked best-move
@@ -184,9 +184,7 @@ class Battlesnake:
         move_score = self.minimax(depth, -inf, inf, board, False, snakeId)
         resultArray[moveIdx] = move_score
         
-    def execute_minimax(self, preferred_moves, snakeId, timeLimit=None):
-        if not timeLimit:
-            timeLimit = self.TIME_LIMIT
+    def execute_minimax(self, preferred_moves, snakeId, timeLimit):
         minimax_values = Array('i', len(preferred_moves))
         
         # Iterative deepening
@@ -508,7 +506,7 @@ class Battlesnake:
         our_snake_copy = board_copy.get_our_snake().copy()
         
         # Remove our snake from the board
-        board_copy.get_our_snake().kill_this_snake()
+        board_copy.snakes.remove(board_copy.get_our_snake())
         
         # Hotfix for in case food spawns in our path once we're committed
         # e.g. https://play.battlesnake.com/game/d0e9b478-c8de-48e9-812a-506f7a7ffce5
@@ -520,8 +518,8 @@ class Battlesnake:
         
         visited.add(initial_head)
         to_visit = deque([(our_snake_copy.copy(), board_copy.food.copy(), [m]) for m in initialMoveList])
-    
-        while to_visit:
+        depth = 0
+        while to_visit and depth <= 250:
             snake, food, path = to_visit.popleft()
             snake_copy = snake.copy()
             direction_mapping = {
@@ -550,6 +548,7 @@ class Battlesnake:
                 new_path = path.copy()
                 new_path.append(m)
                 to_visit.append((snake_copy.copy(), food.copy(), new_path))
+            depth += 1
 
         # Search failed
         print("Error can't find path to tile in desiredTilesList, returning None")

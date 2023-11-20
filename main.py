@@ -27,7 +27,7 @@ def info() -> typing.Dict:
         "author": "Globe Gliders", 
         "color": "#b5defc",
         "head": "top-hat",
-        "tail": "bonhomme"
+        "tail": "submarine"
     }
 
 
@@ -55,7 +55,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     except Exception as e:
         print(e)
         print("!!! ERROR: Something happened in normal best-move !!!")
-        best_move = battle_snake.backup_move()
+        best_move = battle_snake.get_backup_move()
         
         
     print(f"[Decided Move]: " + best_move)
