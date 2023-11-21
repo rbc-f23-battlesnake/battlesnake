@@ -140,7 +140,7 @@ class Battlesnake:
             print("Attacking!")
 
             # Target closest enemy
-            closest_enemy = self.get_closest_snake()
+            closest_enemy = self.get_closest_snake(preferred_moves)
             
             if closest_enemy:
                 possible_enemy_moves = self.__get_safe_moves(closest_enemy, self.board, checkHeadOnHead=False)
@@ -190,21 +190,6 @@ class Battlesnake:
         resultArray[moveIdx] = move_score
         
     def execute_minimax(self, preferred_moves, snakeId, timeLimit):
-        board_copy = self.board.copy()
-        # Optimization: We only look at snakes that are within our minimax window
-        if len(self.board.snakes) >= 3:
-            threshold = 11
-            if len(self.board.snakes) >= 4:
-                threshold = 6
-            target_snake = board_copy.get_snake(snakeId)
-            close_snakes = [target_snake]
-            for s in board_copy.get_other_snakes(snakeId):
-                closest_tile_dist = min([manhattan_dist(target_snake.get_head(), t) for t in s.tiles])
-                if closest_tile_dist < threshold:
-                    close_snakes.append(s.copy())
-            board_copy.snakes = close_snakes
-        
-        
         minimax_values = Array('i', len(preferred_moves))
         
         # Iterative deepening
@@ -245,7 +230,7 @@ class Battlesnake:
             runtime = (timeLimit - elapsed_time)
 
             for i, move in enumerate(preferred_moves):
-                child_board = board_copy.copy()
+                child_board = self.board.copy()
                 child_board.move_snake(snakeId, move, editFood=False)
                 args = [depth, child_board, snakeId, i, minimax_values]
                 p = Process(target=minimax_wrapper, args=args)
@@ -380,7 +365,7 @@ class Battlesnake:
         distance_to_center = abs(snake.get_head()[0] - 5) + abs(snake.get_head()[1] - 5)
 
         # Encourage controlling the center of the board
-        center_control_bonus = 80
+        center_control_bonus = 50
         score += center_control_bonus // (distance_to_center + 1)
 
         return score
