@@ -73,17 +73,14 @@ class Battlesnake:
         safest_moves = None
         preferred_moves = None
         # print(f"safe moves: {safe_moves}")
-        if len(safe_moves) <= 1:
+        if (len(safe_moves) == 0):
             print("No very safe moves, defaulting to last_ditch_moves")
-            safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
-            if not safe_moves:
-                print("GGWP We have actually no other moves to make")
-                return [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False, customFood=None, checkOtherSnakeCollisions=False)][0]
-        else:
-            self.branch_count = 0
-            safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
-            # print(f"safest moves: {safest_moves}")
+            last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
+            return self.most_squares_move(last_ditch_moves, self.our_snake.id) if last_ditch_moves else "up"
 
+        self.branch_count = 0
+        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
+        # print(f"safest moves: {safest_moves}")
         preferred_moves = safest_moves if safest_moves else safe_moves
 
 
@@ -320,7 +317,7 @@ class Battlesnake:
             
             # Check collision with other snakes
             for other_snake in self.board.get_other_snakes(snake_copy.id):
-                if head in other_snake.tiles[:-1]:
+                if head in other_snake.tiles:
                     collide=True
                     break
             if collide:
@@ -470,11 +467,6 @@ class Battlesnake:
     def get_closest_snake(self, preferredMoves):
         # Filter to be only snakes that are smaller than us
         other_snakes = [s for s in self.board.get_other_snakes(self.our_snake.id) if len(s.tiles) < len(self.our_snake.tiles)]
-        if not other_snakes:
-            print("No smaller snakes to target!")
-            return None
-        if len(other_snakes) == 1:
-            return other_snakes[0]
         other_snake_heads = [s.tiles[0] for s in other_snakes]
 
         closest_path = self.find_shortest_path_to_tiles(preferredMoves, other_snake_heads)
