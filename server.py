@@ -39,7 +39,16 @@ def run_server(handlers: typing.Dict):
         )
         return response
     port = int(os.environ["PORT"]) if "PORT" in os.environ else 8000
+    host = '0.0.0.0'
     print(f"Starting Server on Port {port}")
-    serve(app, port=port)
+    serve(app, 
+          host=host,
+          port=port,
+          connection_limit=15,
+          channel_timeout=5,
+          cleanup_interval=1,
+          expose_tracebacks=True,
+          backlog=3,
+          threads=8)
     
     
