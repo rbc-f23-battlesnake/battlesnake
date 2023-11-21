@@ -60,7 +60,7 @@ class Board:
     
     def can_do_head_on_head(self) -> bool:
         if len(self.snakes) == 2:
-            return self.get_our_snake().get_length() >= self.get_largest_enemy_snake().get_length()
+            return self.get_our_snake().get_length() > self.get_largest_enemy_snake().get_length()
         return False
     
 

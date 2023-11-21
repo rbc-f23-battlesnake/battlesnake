@@ -29,7 +29,7 @@ class Battlesnake:
         self.seen = set()
         self.branch_count = 0
         self.start_time = time()
-        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) - 0.185 # 185ms of overhead
+        self.TIME_LIMIT = (int(game_data["game"]["timeout"]) / 1000) - 0.085 # 85ms of overhead
         self.backup_move = None
 
     def check_available_moves(self, snake: Snake, move: str):
@@ -70,15 +70,20 @@ class Battlesnake:
         
         # check head on = TRUE, as long as we are tied or the largest snake
         safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=not self.board.can_do_head_on_head())]
+        safest_moves = None
+        preferred_moves = None
         # print(f"safe moves: {safe_moves}")
-        if (len(safe_moves) == 0):
+        if not safe_moves:
             print("No very safe moves, defaulting to last_ditch_moves")
-            last_ditch_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
-            return self.most_squares_move(last_ditch_moves, self.our_snake.id) if last_ditch_moves else "up"
-        
-        self.branch_count = 0
-        safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
-        # print(f"safest moves: {safest_moves}")
+            safe_moves = [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False)]
+            if not safe_moves:
+                print("GGWP We have actually no other moves to make")
+                return [m for m in moves if self.__is_move_safe(self.our_snake, m, self.board, checkHeadOnHead=False, customFood=None, checkOtherSnakeCollisions=False)][0]
+        else:
+            self.branch_count = 0
+            safest_moves = [m for m in safe_moves if not self.is_stuck_in_dead_end(self.our_snake, 15, m)]
+            # print(f"safest moves: {safest_moves}")
+
         preferred_moves = safest_moves if safest_moves else safe_moves
 
 
@@ -135,15 +140,15 @@ class Battlesnake:
             print("Attacking!")
 
             # Target closest enemy
-            closest_enemy = self.get_closest_snake(preferred_moves)
+            largest_enemy = self.board.get_largest_enemy_snake()
             
-            if closest_enemy:
-                possible_enemy_moves = self.__get_safe_moves(closest_enemy, self.board, checkHeadOnHead=False)
+            if largest_enemy:
+                possible_enemy_moves = self.__get_safe_moves(largest_enemy, self.board, checkHeadOnHead=False)
                 if possible_enemy_moves:
                     # find algorithm to get best tile for enemy snake while also no killing ourselves
-                    best_enemy_move_scores = self.execute_minimax(possible_enemy_moves, snakeId=closest_enemy.id, timeLimit=0.100)
+                    best_enemy_move_scores = self.execute_minimax(possible_enemy_moves, snakeId=largest_enemy.id, timeLimit=0.085)
                     best_enemy_move = max(best_enemy_move_scores, key=best_enemy_move_scores.get)
-                    target_tile = utils.simulate_move(best_enemy_move, closest_enemy.get_head())
+                    target_tile = utils.simulate_move(best_enemy_move, largest_enemy.get_head())
                     
                     print(f"Best Enemy move: {best_enemy_move} - targeting tile: {target_tile}")
                     path = self.find_shortest_path_to_tiles(preferred_moves, [target_tile])
@@ -200,6 +205,28 @@ class Battlesnake:
                 print(f"Minimax Calculation took {elapsed_time} seconds")
                 break
             
+            # Sorting pruning optimization
+            # if not depth % 4 and depth:
+            #     # cleanup
+
+            #     for p in background_processes:
+            #         p.kill()
+            #         p.join()
+            #         p.close()
+
+            #     background_processes.clear()
+                
+            #     # print("Before sort")
+            #     # print(list(minimax_values))
+            #     # print(list(preferred_moves))
+            #     values = list(minimax_values)
+            #     values, preferred_moves = (list(t) for t in zip(*sorted(zip(values, preferred_moves), reverse=True)))
+                
+            #     for i in range(len(values)):
+            #         minimax_values[i] = values[i] 
+            #     # print("After sort")
+            #     # print(list(minimax_values))
+            #     # print(list(preferred_moves))
             runtime = (timeLimit - elapsed_time)
 
             for i, move in enumerate(preferred_moves):
@@ -220,8 +247,10 @@ class Battlesnake:
         
         # cleanup
         for p in background_processes:
-            p.terminate()
-                
+            p.kill()
+            p.join()
+            p.close()
+
         # Reformat results and return them
         minimax_result_dict = {move: list(minimax_values)[i] for i, move in enumerate(preferred_moves)}
         print(f"Got to minimax depth {depth}")
@@ -285,16 +314,13 @@ class Battlesnake:
             
             # Check self-collision
             collide = False
-            for tile in snake_copy.tiles[1:]:
-                if head == tile:
-                    collide = True
-                    break
-            if collide:
+            if head in snake_copy.tiles[1:]:
+                collide = True
                 continue
             
             # Check collision with other snakes
             for other_snake in self.board.get_other_snakes(snake_copy.id):
-                if head in other_snake.tiles:
+                if head in other_snake.tiles[:-1]:
                     collide=True
                     break
             if collide:
@@ -339,7 +365,7 @@ class Battlesnake:
         distance_to_center = abs(snake.get_head()[0] - 5) + abs(snake.get_head()[1] - 5)
 
         # Encourage controlling the center of the board
-        center_control_bonus = 50
+        center_control_bonus = 80
         score += center_control_bonus // (distance_to_center + 1)
 
         return score
@@ -393,13 +419,10 @@ class Battlesnake:
             return value
                     
 
-    def __get_safe_moves(self, snake, board, checkHeadOnHead=True, customFood=None):
-        if customFood:
-            return [m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead, customFood)]
+    def __get_safe_moves(self, snake, board, checkHeadOnHead=True, customFood=None, checkOtherSnakeCollisions=True):
+        return [m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead, customFood, checkOtherSnakeCollisions)]
+    
 
-        return [m for m in moves if self.__is_move_safe(snake, m, board, checkHeadOnHead)]
-    
-    
     def most_squares_move(self, moveChoices, snakeId):
         bestMove = moveChoices[0]
         bestSquares = -1
@@ -554,7 +577,7 @@ class Battlesnake:
         print("Error can't find path to tile in desiredTilesList, returning None")
         return None
 
-    def __is_move_safe(self, snake: Snake, move: str, board, checkHeadOnHead=True, customFood=None) -> bool:
+    def __is_move_safe(self, snake: Snake, move: str, board, checkHeadOnHead=True, customFood=None, checkOtherSnakeCollisions=True) -> bool:
         if not snake.is_alive:
             return False
         # print("Testing move " + move)
@@ -579,26 +602,29 @@ class Battlesnake:
             return False
         
         # Check if snake collides with itself
-        for tile in snake_copy.tiles[1:]:
-            if head == tile:
-                # print("move not safe, self collision")
-                return False
+        if head in snake_copy.tiles[1:]:
+            # print("move not safe, self collision")
+            return False
         
-        other_snakes = board.get_other_snakes(snake.id)
+        if not checkOtherSnakeCollisions:
+            return True
+        
+        other_snakes = board.get_other_snakes(snake.id)                
+        other_snake_safe_moves = {s.id: self.__get_safe_moves(s, board, checkHeadOnHead=False, customFood=None, checkOtherSnakeCollisions=False) for s in other_snakes}
+        
         # Check if snake can possibly collide with other snakes' bodies
         for other_snake in other_snakes:
-            for tile in other_snake.tiles[1:-1]:
-                if head == tile:
-                    # print("Move not safe, other snake collision")
+            if head in other_snake.tiles[1:-1]:
+                # This is kinda wacky but we can actually move into another snake's body if it kills itself first
+                if other_snake_safe_moves[other_snake.id]: # So only return false if the other snake can stay alive
                     return False
-                        
+
         # Check if head or tail collisions are possible
         for other_snake in other_snakes:
             # Simulate moving other snake, then check if collision
-            for move in moves:
+            for move in other_snake_safe_moves[other_snake.id]:
                 other_snake_copy = other_snake.copy()
                 other_snake_has_grown = other_snake_copy.move(move, board.food)[0]
-                
                 
                 # Head-to-head possibility
                 if checkHeadOnHead and head == other_snake_copy.tiles[0]:
@@ -610,5 +636,4 @@ class Battlesnake:
                 if (other_snake_has_grown or other_snake_copy.tiles[-1] == other_snake_copy.tiles[-2]) and head == other_snake_copy.tiles[-1]:
                     # print("move not safe, tail collision")
                     return False
-        # print("Move is safe!")
         return True
